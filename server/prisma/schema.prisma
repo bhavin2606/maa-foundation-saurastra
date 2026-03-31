@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Reel {
+  id          String   @id @default(cuid())
+  organizer   String
+  avatarUrl   String?
+  reelUrl     String
+  videoUrl    String?
+  posterUrl   String?
+  caption     String
+  itemLabel   String
+  itemPrice   Float
+  category    String
+  likes       String   @default("0")
+  comments    String   @default("0")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  donations   Donation[]
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  image       String
+  goal        Float
+  raised      Float    @default(0)
+  category    String
+  organizer   String
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  donations   Donation[]
+}
+
+model Donation {
+  id          String   @id @default(cuid())
+  amount      Float
+  quantity    Int      @default(1)
+  itemLabel   String?
+  donorName   String
+  donorEmail  String
+  status      String   @default("PENDING")
+  
+  reelId      String?
+  reel        Reel?    @relation(fields: [reelId], references: [id])
+  
+  campaignId  String?
+  campaign    Campaign? @relation(fields: [campaignId], references: [id])
+  
+  createdAt   DateTime @default(now())
+}
+
+model ContactQuery {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+}

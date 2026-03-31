@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Foundation Project
+
+This is the Foundation project, refactored into a clean separation of concerns with independent frontend and backend modules.
+
+## Project Structure
+
+```
+foundation/
+├── client/          # Next.js frontend application
+├── server/          # Node.js/Express backend API (MVC architecture)
+└── README.md        # Project overview
+```
+
+## Prerequisites
+
+- Node.js (v18+)
+- npm or yarn
 
 ## Getting Started
 
-First, run the development server:
+### 1. Backend (Server)
+
+The backend uses Node.js, Express, and Prisma.
 
 ```bash
+cd server
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The server will run on `http://localhost:4000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2. Frontend (Client)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The frontend uses Next.js and RTK Query.
 
-## Learn More
+```bash
+cd client
+npm install
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+The frontend will run on `http://localhost:3000`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Architecture
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Client**: Built with Next.js 16 (App Router), Redux Toolkit, and Tailwind CSS.
+- **Server**: Built with Express.js, following a Model-Controller-Service-Route architecture for scalability.
+- **Database**: Integrated with Prisma ORM (SQLite for development).
 
-## Deploy on Vercel
+## Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Campaign Management
+- Donation Processing
+- Reel Management
+- Dashboard Analytics
+- Contact Query Management
