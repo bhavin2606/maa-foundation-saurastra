@@ -15,13 +15,13 @@ export default function AdminDashboard() {
   }
 
   const stats = [
-    { label: "Total Donations", value: `₹${data.stats.totalRaised.toLocaleString()}`, change: "+12%", icon: IndianRupee, color: "from-primary to-accent" },
-    { label: "Total Donors", value: data.stats.totalDonors, change: "+8%", icon: Users, color: "from-blue-500 to-cyan-400" },
-    { label: "Active Campaigns", value: data.stats.activeCampaigns, change: "+3", icon: Megaphone, color: "from-emerald-500 to-green-400" },
-    { label: "Active Reels", value: data.stats.activeReels, change: "+5", icon: FilmIcon, color: "from-purple-500 to-pink-400" },
+    { label: "Total Donations", value: `₹${(data?.stats?.totalRaised ?? 0).toLocaleString()}`, change: "+12%", icon: IndianRupee, color: "from-primary to-accent" },
+    { label: "Total Donors", value: data?.stats?.totalDonors ?? 0, change: "+8%", icon: Users, color: "from-blue-500 to-cyan-400" },
+    { label: "Active Campaigns", value: data?.stats?.activeCampaigns ?? 0, change: "+3", icon: Megaphone, color: "from-emerald-500 to-green-400" },
+    { label: "Active Reels", value: data?.stats?.activeReels ?? 0, change: "+5", icon: FilmIcon, color: "from-purple-500 to-pink-400" },
   ];
 
-  const recentDonations = data.recentDonations;
+  const recentDonations = data?.recentDonations ?? [];
   return (
     <div className="space-y-8">
       {/* Header */}

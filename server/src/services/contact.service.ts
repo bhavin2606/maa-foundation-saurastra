@@ -7,6 +7,18 @@ export class ContactService {
     });
   }
 
+  static async getById(id: string) {
+    return await prisma.contactQuery.findUnique({
+      where: { id },
+    });
+  }
+
+  static async delete(id: string) {
+    return await prisma.contactQuery.delete({
+      where: { id },
+    });
+  }
+
   static async create(data: any) {
     const { name, email, subject, message } = data;
     return await prisma.contactQuery.create({

@@ -11,6 +11,22 @@ export class DonationsService {
     });
   }
 
+  static async getById(id: string) {
+    return await prisma.donation.findUnique({
+      where: { id },
+      include: {
+        reel: true,
+        campaign: true,
+      },
+    });
+  }
+
+  static async delete(id: string) {
+    return await prisma.donation.delete({
+      where: { id },
+    });
+  }
+
   static async create(data: any) {
     const { amount, quantity, itemLabel, donorName, donorEmail, reelId, campaignId } = data;
     

@@ -12,12 +12,12 @@ export interface ContactQuery {
 export const contactApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getMessages: builder.query<ContactQuery[], void>({
-      query: () => "/api/contact",
+      query: () => "/contact",
       providesTags: ["Contact"],
     }),
     submitMessage: builder.mutation<ContactQuery, Partial<ContactQuery>>({
       query: (body) => ({
-        url: "/api/contact",
+        url: "/contact",
         method: "POST",
         body,
       }),
