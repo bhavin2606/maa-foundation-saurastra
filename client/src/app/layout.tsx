@@ -31,6 +31,7 @@ export default function RootLayout({
     >
       <body className="flex min-h-screen flex-col">
         <Providers>{children}</Providers>
+        <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
       </body>
     </html>
   );

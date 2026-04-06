@@ -138,6 +138,45 @@ export class ContactController {
    *       404:
    *         description: Message not found
    */
+  /**
+   * @swagger
+   * /api/contact/{id}/status:
+   *   patch:
+   *     summary: Update the status of a contact message
+   *     tags: [Contact]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: The message id
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               status:
+   *                 type: string
+   *                 enum: [PENDING, RESOLVED, REJECTED]
+   *     responses:
+   *       200:
+   *         description: Status updated successfully
+   *       404:
+   *         description: Message not found
+   */
+  static async updateStatus(req: Request, res: Response) {
+    try {
+      const { status } = req.body;
+      const query = await ContactService.updateStatus(req.params.id, status);
+      res.json(query);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update status" });
+    }
+  }
+
   static async delete(req: Request, res: Response) {
     try {
       await ContactService.delete(req.params.id);

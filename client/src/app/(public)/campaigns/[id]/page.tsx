@@ -97,7 +97,7 @@ export default function CampaignDetailPage() {
                 </div>
               </div>
               <Link
-                href="/donate"
+                href={`/donate?campaignId=${campaign.id}`}
                 className="mt-8 block rounded-full bg-gradient-to-r from-primary to-accent py-3.5 text-center text-sm font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:shadow-xl"
               >
                 Donate to This Campaign

@@ -24,7 +24,15 @@ import { DonationsService } from "../services/donations.service.js";
  *           type: string
  *         donorEmail:
  *           type: string
+ *         phone:
+ *           type: string
+ *         message:
+ *           type: string
  *         status:
+ *           type: string
+ *         paymentMethod:
+ *           type: string
+ *         screenshotUrl:
  *           type: string
  *         reelId:
  *           type: string
@@ -153,6 +161,65 @@ export class DonationsController {
       res.json({ message: "Donation deleted successfully" });
     } catch (error) {
       res.status(500).json({ error: "Failed to delete donation" });
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/donations/create-order:
+   *   post:
+   *     summary: Create a new Razorpay order
+   *     tags: [Donations]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               amount:
+   *                 type: number
+   *     responses:
+   *       200:
+   *         description: The Razorpay order was successfully created
+   */
+  static async createOrder(req: Request, res: Response) {
+    try {
+      const { amount } = req.body;
+      if (!amount) {
+        return res.status(400).json({ error: "Amount is required" });
+      }
+      const order = await DonationsService.createRazorpayOrder(amount);
+      res.json(order);
+    } catch (error) {
+      console.error("Error creating Razorpay order:", error);
+      res.status(500).json({ error: "Failed to create payment order" });
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/donations/verify-payment:
+   *   post:
+   *     summary: Verify Razorpay payment signature
+   *     tags: [Donations]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *     responses:
+   *       200:
+   *         description: Payment verified and donation recorded
+   */
+  static async verifyPayment(req: Request, res: Response) {
+    try {
+      const donation = await DonationsService.verifyRazorpayPayment(req.body);
+      res.json(donation);
+    } catch (error) {
+      console.error("Payment verification failed:", error);
+      res.status(400).json({ error: "Payment verification failed" });
     }
   }
 }

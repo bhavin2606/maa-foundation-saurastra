@@ -23,7 +23,27 @@ export const contactApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Contact"],
     }),
+    updateStatus: builder.mutation<ContactQuery, { id: string; status: string }>({
+      query: ({ id, ...body }) => ({
+        url: `/contact/${id}/status`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["Contact"],
+    }),
+    deleteMessage: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/contact/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Contact"],
+    }),
   }),
 });
 
-export const { useGetMessagesQuery, useSubmitMessageMutation } = contactApi;
+export const { 
+  useGetMessagesQuery, 
+  useSubmitMessageMutation,
+  useUpdateStatusMutation,
+  useDeleteMessageMutation,
+} = contactApi;

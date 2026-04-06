@@ -30,4 +30,11 @@ export class ContactService {
       },
     });
   }
+
+  static async updateStatus(id: string, status: string) {
+    return await prisma.contactQuery.update({
+      where: { id },
+      data: { status },
+    });
+  }
 }

@@ -28,79 +28,78 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-white/95 py-3 shadow-lg backdrop-blur-md"
-          : "bg-white/80 py-5 backdrop-blur-sm"
+          ? "glass-morphism py-3"
+          : "bg-transparent py-6"
       }`}
     >
       <div className="w-full max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-12">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white shadow-lg shadow-primary/30 transition-transform group-hover:scale-110">
-            <Heart fill="currentColor" size={22} />
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-white shadow-glow transition-all duration-500 group-hover:rotate-12 group-hover:scale-110">
+            <Heart fill="currentColor" size={24} />
           </div>
-          <span className="text-2xl font-black text-secondary tracking-tighter">
-            Maa Foundation
+          <span className="text-2xl font-black text-secondary tracking-tighter uppercase lg:text-3xl">
+            Maa<span className="text-primary italic">Foundation</span>
           </span>
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden items-center gap-10 lg:flex">
-          <div className="flex items-center gap-8">
+        <div className="hidden items-center gap-12 lg:flex">
+          <div className="flex items-center gap-10">
             {navLinks.map((link) => {
               const isActive = pathname === link.path;
               return (
                 <Link
                   key={link.name}
                   href={link.path}
-                  className={`relative text-sm font-bold uppercase tracking-widest transition-all hover:text-primary ${
-                    isActive ? "text-primary" : "text-secondary/70"
+                  className={`relative text-xs font-black uppercase tracking-[0.2em] transition-all hover:text-primary ${
+                    isActive ? "text-primary" : "text-secondary/60"
                   }`}
                 >
                   {link.name}
-                  {isActive && (
-                    <span className="absolute -bottom-2 left-0 h-0.5 w-full bg-primary" />
-                  )}
+                  <span className={`absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-primary to-accent transition-all duration-300 ${isActive ? "w-full" : "w-0"}`} />
                 </Link>
               );
             })}
           </div>
           <Link
             href="/donate"
-            className="rounded-full bg-secondary px-8 py-3 text-sm font-bold text-white shadow-xl transition-all hover:bg-primary hover:shadow-primary/30 active:scale-95"
+            className="group relative overflow-hidden rounded-full bg-secondary px-10 py-4 text-xs font-black uppercase tracking-widest text-white shadow-premium transition-all hover:bg-primary hover:-translate-y-1 active:scale-95"
           >
-            Donate Now
+            <span className="relative z-10">Donate Now</span>
+            <div className="absolute inset-0 z-0 bg-gradient-to-r from-primary to-accent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
           </Link>
         </div>
 
         {/* Mobile Menu Toggle */}
         <button
-          className="lg:hidden text-secondary"
+          className="lg:hidden flex h-10 w-10 items-center justify-center rounded-xl bg-secondary/5 text-secondary transition-colors hover:bg-secondary/10"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
-          {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="absolute top-full left-0 right-0 bg-white border-t border-gray-100 p-6 shadow-2xl lg:hidden flex flex-col gap-4 animate-in slide-in-from-top duration-300">
+        <div className="absolute top-full left-4 right-4 mt-4 rounded-3xl glass-morphism p-8 shadow-2xl lg:hidden flex flex-col gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.path}
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-between py-3 text-lg font-bold text-secondary border-b border-gray-50"
+              className="flex items-center justify-between text-xl font-black text-secondary uppercase tracking-tight"
             >
               {link.name}
-              <ChevronRight size={18} className="text-primary" />
+              <ChevronRight size={20} className="text-primary" />
             </Link>
           ))}
           <Link
             href="/donate"
             onClick={() => setMobileMenuOpen(false)}
-            className="mt-4 rounded-xl bg-primary px-6 py-4 text-center text-lg font-bold text-white shadow-lg"
+            className="mt-4 rounded-2xl bg-gradient-to-r from-primary to-accent px-6 py-5 text-center text-lg font-black text-white shadow-glow"
           >
             Donate Now
           </Link>

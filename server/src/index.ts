@@ -7,6 +7,8 @@ import { donationsRouter } from "./routes/donations.js";
 import { contactRouter } from "./routes/contact.js";
 import { reelsRouter } from "./routes/reels.js";
 import { dashboardRouter } from "./routes/dashboard.js";
+import { authRouter } from "./routes/auth.js";
+import { authMiddleware } from "./middleware/auth.middleware.js";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -22,6 +24,20 @@ const swaggerOptions = {
     servers: [
       {
         url: `http://localhost:${PORT}`,
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
       },
     ],
   },
@@ -41,7 +57,8 @@ app.use("/api/campaigns", campaignsRouter);
 app.use("/api/donations", donationsRouter);
 app.use("/api/contact", contactRouter);
 app.use("/api/reels", reelsRouter);
-app.use("/api/dashboard", dashboardRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/dashboard", authMiddleware, dashboardRouter);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });

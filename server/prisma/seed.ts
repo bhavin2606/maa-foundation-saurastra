@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log("Seeding database...");
-  
+
   await prisma.reel.createMany({
     data: [
       {
@@ -35,6 +35,24 @@ async function main() {
       },
     ],
   });
+
+  // Admin Seeding
+  const adminExists = await prisma.admin.findUnique({
+    where: { username: "admin" }
+  });
+
+  if (!adminExists) {
+    const bcrypt = await import("bcryptjs");
+    const hashedPassword = await bcrypt.default.hash("Maa@admin1234", 10);
+    await prisma.admin.create({
+      data: {
+        username: "admin",
+        email: "adminmaa@mailinator.com",
+        password: hashedPassword,
+      },
+    });
+    console.log("Admin user created: admin / Maa@admin1234");
+  }
 
   console.log("Database seeded successfully");
 }

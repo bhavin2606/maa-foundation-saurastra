@@ -41,21 +41,25 @@ model Campaign {
 }
 
 model Donation {
-  id          String   @id @default(cuid())
-  amount      Float
-  quantity    Int      @default(1)
-  itemLabel   String?
-  donorName   String
-  donorEmail  String
-  status      String   @default("PENDING")
+  id              String   @id @default(cuid())
+  amount          Float
+  quantity        Int      @default(1)
+  itemLabel       String?
+  donorName       String
+  donorEmail      String
+  phone           String?
+  message         String?
+  status          String   @default("PENDING")
+  paymentMethod   String?  // "GATEWAY" or "SCAN_AND_PAY"
+  screenshotUrl   String?
   
-  reelId      String?
-  reel        Reel?    @relation(fields: [reelId], references: [id])
+  reelId          String?
+  reel            Reel?    @relation(fields: [reelId], references: [id])
   
-  campaignId  String?
-  campaign    Campaign? @relation(fields: [campaignId], references: [id])
+  campaignId      String?
+  campaign        Campaign? @relation(fields: [campaignId], references: [id])
   
-  createdAt   DateTime @default(now())
+  createdAt       DateTime @default(now())
 }
 
 model ContactQuery {
@@ -64,5 +68,17 @@ model ContactQuery {
   email     String
   subject   String
   message   String
+  status    String   @default("PENDING") // PENDING, RESOLVED, REJECTED
   createdAt DateTime @default(now())
+}
+
+model Admin {
+  id              String   @id @default(cuid())
+  username        String   @unique
+  email           String   @unique
+  password        String
+  otp             String?
+  otpExpires      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

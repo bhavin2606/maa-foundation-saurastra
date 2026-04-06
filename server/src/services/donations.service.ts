@@ -1,4 +1,6 @@
 import { prisma } from "../lib/prisma.js";
+import { razorpay } from "../lib/razorpay.js";
+import crypto from "crypto";
 
 export class DonationsService {
   static async getAll() {
@@ -28,7 +30,7 @@ export class DonationsService {
   }
 
   static async create(data: any) {
-    const { amount, quantity, itemLabel, donorName, donorEmail, reelId, campaignId } = data;
+    const { amount, quantity, itemLabel, donorName, donorEmail, phone, message, paymentMethod, screenshotUrl, reelId, campaignId, status } = data;
     
     const donation = await prisma.donation.create({
       data: {
@@ -37,13 +39,17 @@ export class DonationsService {
         itemLabel,
         donorName,
         donorEmail,
+        phone,
+        message,
+        paymentMethod,
+        screenshotUrl,
         reelId,
         campaignId,
-        status: "SUCCESS",
+        status: status || (paymentMethod === "SCAN_AND_PAY" ? "PENDING" : "SUCCESS"),
       },
     });
 
-    if (campaignId) {
+    if (donation.status === "SUCCESS" && campaignId) {
       await prisma.campaign.update({
         where: { id: campaignId },
         data: {
@@ -55,5 +61,48 @@ export class DonationsService {
     }
 
     return donation;
+  }
+
+  static async createRazorpayOrder(amount: number) {
+    const options = {
+      amount: Math.round(amount * 100), // amount in the smallest currency unit (paise)
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`,
+    };
+
+    try {
+      const order = await razorpay.orders.create(options);
+      return order;
+    } catch (error) {
+      console.error("Razorpay order creation failed:", error);
+      throw new Error("Failed to create Razorpay order");
+    }
+  }
+
+  static async verifyRazorpayPayment(paymentData: any) {
+    const { 
+      razorpay_order_id, 
+      razorpay_payment_id, 
+      razorpay_signature,
+      donationData 
+    } = paymentData;
+
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET || "")
+      .update(body.toString())
+      .digest("hex");
+
+    if (expectedSignature === razorpay_signature) {
+      // Payment is valid, create/update donation
+      return await this.create({
+        ...donationData,
+        status: "SUCCESS",
+        paymentMethod: "GATEWAY"
+      });
+    } else {
+      throw new Error("Invalid payment signature");
+    }
   }
 }

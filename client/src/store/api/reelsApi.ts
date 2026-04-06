@@ -21,6 +21,10 @@ export const reelsApi = baseApi.injectEndpoints({
       query: () => "/reels",
       providesTags: ["Reels"],
     }),
+    getReelById: builder.query<Reel, string>({
+      query: (id) => `/reels/${id}`,
+      providesTags: (result, error, id) => [{ type: "Reels", id }],
+    }),
     createReel: builder.mutation<Reel, Partial<Reel>>({
       query: (body) => ({
         url: "/reels",
@@ -49,6 +53,7 @@ export const reelsApi = baseApi.injectEndpoints({
 
 export const {
   useGetReelsQuery,
+  useGetReelByIdQuery,
   useCreateReelMutation,
   useUpdateReelMutation,
   useDeleteReelMutation,

@@ -34,28 +34,9 @@ export default function ReelsPage() {
     setQuantities((prev) => ({ ...prev, [id]: isNaN(num) || num < 1 ? 1 : num }));
   };
 
-  const handleDonate = async (reel: any) => {
+  const handleDonate = (reel: any) => {
     const qty = quantities[reel.id] || 10;
-    const total = qty * reel.itemPrice;
-
-    try {
-      await createDonation({
-        amount: total,
-        quantity: qty,
-        itemLabel: reel.itemLabel,
-        donorName: "Guest Donor", // Placeholder for now
-        donorEmail: "guest@example.com",
-        reelId: reel.id,
-      }).unwrap();
-
-      alert(
-        `Thank you for donating ₹${total} for ${qty} ${reel.itemLabel}(s)! Your impact has been recorded.`
-      );
-      setActiveDonationId(null);
-    } catch (error) {
-      console.error("Donation failed:", error);
-      alert("Failed to process donation. Please try again.");
-    }
+    router.push(`/donate?reelId=${reel.id}&quantity=${qty}`);
   };
 
   if (isLoading) {
@@ -67,48 +48,48 @@ export default function ReelsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-secondary overflow-hidden">
+      {/* Decorative Background */}
+      <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
+        <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[140px]" />
+        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px]" />
+      </div>
+
       {/* Page Header */}
-      <div className="bg-gradient-to-b from-gray-900 to-black py-16 text-center">
+      <div className="relative z-10 pt-40 pb-20 text-center">
         <div className="container px-6">
-          <h1 className="text-4xl font-black text-white lg:text-6xl tracking-tighter uppercase">
-            Impact{" "}
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent italic">
-              Reels
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-2.5 text-xs font-black text-primary uppercase tracking-[0.3em] mb-8 lg:mb-12">
+            Real Stories
+          </span>
+          <h1 className="text-6xl font-black text-white lg:text-[10rem] tracking-tighter uppercase leading-[0.8]">
+            Impact <br/>
+            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent italic bg-[length:200%_auto] animate-[gradient_4s_linear_infinite]">
+              In Motion
             </span>
           </h1>
-          <p className="mt-4 text-xl font-medium text-gray-400 max-w-2xl mx-auto">
-            Watch real impact and support directly from the feed.
+          <p className="mt-12 text-xl font-medium text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            Witness the change your support creates. Watch, engage, and 
+            donate directly to specific causes from the feed.
           </p>
         </div>
       </div>
 
       {/* Reels Feed */}
-      <div className="mx-auto flex max-w-lg flex-col gap-12 px-4 py-8">
+      <div className="mx-auto flex max-w-2xl flex-col gap-24 px-4 py-20 relative z-10">
         {reels.map((reel: any) => {
           let embedUrl = null;
-
-          // Instagram Detection
           const igMatch = reel.reelUrl.match(/instagram\.com\/reel\/([A-Za-z0-9_-]+)/);
-          if (igMatch) {
-            embedUrl = `https://www.instagram.com/reel/${igMatch[1]}/embed/captioned/`;
-          }
-
-          // Facebook Detection
+          if (igMatch) embedUrl = `https://www.instagram.com/reel/${igMatch[1]}/embed/captioned/`;
           const isFB = reel.reelUrl.includes("facebook.com");
-          if (isFB) {
-            // Encode the URL and use the standard video plugin
-            // container_width=true help with responsiveness
-            embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(reel.reelUrl)}&show_text=false&t=0&autoplay=true&mute=true&container_width=true`;
-          }
+          if (isFB) embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(reel.reelUrl)}&show_text=false&t=0&autoplay=true&mute=true&container_width=true`;
 
           return (
             <div
               key={reel.id}
-              className="relative overflow-hidden rounded-[40px] bg-gray-900 shadow-2xl border border-white/5"
-              style={{ height: "800px" }}
+              className="relative overflow-hidden rounded-[56px] bg-black shadow-premium border border-white/5 group"
+              style={{ height: "850px" }}
             >
-              {/* Direct Reel Embed or Video Player */}
+              {/* Video/Embed Container */}
               <div className="absolute inset-0 bg-black">
                 {embedUrl ? (
                   <iframe
@@ -132,98 +113,100 @@ export default function ReelsPage() {
                   <img
                     src={reel.posterUrl}
                     alt={reel.caption}
-                    className="h-full w-full object-cover opacity-50"
+                    className="h-full w-full object-cover opacity-50 transition-transform duration-1000 group-hover:scale-105"
                   />
                 )}
               </div>
 
+              {/* Top Overlay Stats */}
+              <div className="absolute top-8 left-8 right-8 flex justify-between items-start pointer-events-none">
+                <div className="glass-morphism px-4 py-2 rounded-2xl border-white/10 flex items-center gap-3">
+                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                  <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none">Live Impact</span>
+                </div>
+              </div>
+
               {/* Donation Overlay Button */}
-              <div className="absolute bottom-10 left-0 right-0 px-8 flex justify-center">
+              <div className="absolute bottom-12 left-0 right-0 px-8 flex justify-center">
                 <button
                   onClick={() => setActiveDonationId(reel.id)}
-                  className="group relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-2xl bg-white p-2 pr-6 shadow-2xl transition-all hover:scale-105 active:scale-95"
+                  className="group relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-[32px] glass-morphism p-3 pr-8 border-white/20 transition-all duration-500 hover:scale-[1.02] active:scale-95 cursor-pointer shadow-premium"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent text-white shadow-lg">
-                      <Heart fill="white" size={24} />
+                  <div className="flex items-center gap-5">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-[24px] bg-gradient-to-br from-primary to-accent text-white shadow-glow transition-transform group-hover:rotate-12">
+                      <Heart fill="white" size={28} />
                     </div>
                     <div className="flex flex-col text-left">
-                      <span className="text-sm font-black text-secondary uppercase tracking-wider">Donate {reel.itemLabel}</span>
-                      <span className="text-xs font-bold text-muted">₹{reel.itemPrice} per item</span>
+                      <span className="text-xs font-black text-white uppercase tracking-[0.2em] mb-1">Donate {reel.itemLabel}</span>
+                      <span className="text-lg font-black text-primary">₹{reel.itemPrice} <span className="text-[10px] text-white/40 uppercase tracking-widest font-bold">/ unit</span></span>
                     </div>
                   </div>
-                  <div className="rounded-lg bg-secondary/5 px-4 py-2 text-sm font-black text-primary group-hover:bg-primary group-hover:text-white transition-colors text-nowrap">
-                    DONATE NOW
+                  <div className="hidden sm:flex items-center gap-3 text-white font-black uppercase text-[10px] tracking-widest group-hover:text-primary transition-colors">
+                    SUPPORT NOW <ArrowRight size={18} className="text-primary transition-transform group-hover:translate-x-2" />
                   </div>
                 </button>
               </div>
 
-              {/* Donation Selection Popup (Overlay over the reel) */}
+              {/* Donation Selection Popup */}
               {activeDonationId === reel.id && (
-                <div className="absolute inset-0 z-20 flex items-end bg-black/40 backdrop-blur-[2px] animate-in fade-in duration-300">
-                  <div
-                    className="w-full rounded-t-[40px] bg-white p-8 shadow-2xl animate-in slide-in-from-bottom duration-500 overflow-hidden"
-                  >
-                    <div className="mb-6 flex items-center justify-between">
+                <div className="absolute inset-0 z-20 flex items-end bg-black/60 backdrop-blur-md animate-in fade-in duration-500">
+                  <div className="w-full rounded-t-[56px] glass-morphism p-10 border-white/20 shadow-premium animate-in slide-in-from-bottom duration-700">
+                    <div className="mb-10 flex items-center justify-between">
                       <div>
-                        <h3 className="text-2xl font-black text-secondary tracking-tight">Direct Donation</h3>
-                        <p className="text-sm font-medium text-muted">Support this specific cause</p>
+                        <h3 className="text-3xl font-black text-white tracking-tight leading-none mb-2">Direct Contribution</h3>
+                        <p className="text-xs font-bold text-white/40 uppercase tracking-[0.2em]">100% Goes to the cause</p>
                       </div>
                       <button
                         onClick={() => setActiveDonationId(null)}
-                        className="rounded-full bg-gray-100 p-2 text-muted hover:bg-gray-200 transition-colors"
+                        className="rounded-full bg-white/5 p-4 text-white hover:bg-white/10 transition-all active:scale-90"
                       >
-                        <X size={24} />
+                        <X size={28} />
                       </button>
                     </div>
 
-                    <div className="grid gap-6">
-                      <div className="flex items-center gap-6 rounded-2xl bg-gray-50 p-6">
-                        <div className="flex-1">
-                          <label className="text-[10px] font-black text-muted uppercase tracking-widest leading-none">Quantity</label>
-                          <div className="mt-2 flex items-center gap-4">
+                    <div className="grid gap-8">
+                      <div className="grid grid-cols-2 gap-8 rounded-[40px] bg-white/5 border border-white/10 p-8">
+                        <div>
+                          <label className="text-[10px] font-black text-primary uppercase tracking-[0.3em] leading-none block mb-6 px-1">How Many?</label>
+                          <div className="flex items-center gap-6">
                             <button
                               onClick={() => handleQuantityChange(reel.id, (quantities[reel.id] - 5).toString())}
-                              className="flex h-10 w-10 items-center justify-center rounded-lg bg-white border border-gray-200 font-bold text-secondary shadow-sm hover:border-primary active:scale-90"
+                              className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 border border-white/10 font-black text-white hover:bg-primary transition-all active:scale-90"
                             >
-                              -5
+                              -
                             </button>
                             <input
                               type="number"
                               min={1}
-                              value={quantities[reel.id]}
+                              value={quantities[reel.id] || 1}
                               onChange={(e) => handleQuantityChange(reel.id, e.target.value)}
-                              className="w-20 bg-transparent text-center text-3xl font-black text-secondary outline-none"
+                              className="w-16 bg-transparent text-center text-4xl font-black text-white outline-none"
                             />
                             <button
                               onClick={() => handleQuantityChange(reel.id, (quantities[reel.id] + 5).toString())}
-                              className="flex h-10 w-10 items-center justify-center rounded-lg bg-white border border-gray-200 font-bold text-secondary shadow-sm hover:border-primary active:scale-90"
+                              className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 border border-white/10 font-black text-white hover:bg-primary transition-all active:scale-90"
                             >
-                              +5
+                              +
                             </button>
                           </div>
                         </div>
 
-                        <div className="h-12 w-px bg-gray-200" />
-
-                        <div className="flex-1 text-right">
-                          <label className="text-[10px] font-black text-muted uppercase tracking-widest leading-none">Total Amount</label>
-                          <div className="mt-2 text-4xl font-black text-primary">
-                            ₹{(quantities[reel.id] * reel.itemPrice).toLocaleString()}
+                        <div className="text-right flex flex-col justify-center border-l border-white/10 pl-8">
+                          <label className="text-[10px] font-black text-primary uppercase tracking-[0.3em] leading-none block mb-4">Total Gift</label>
+                          <div className="text-5xl font-black text-white tracking-tighter">
+                            ₹{((quantities[reel.id] || (activeDonationId === reel.id ? 1 : 0)) * reel.itemPrice).toLocaleString()}
                           </div>
                         </div>
                       </div>
 
                       <button
                         onClick={() => handleDonate(reel)}
-                        className="flex w-full items-center justify-center gap-3 rounded-2xl bg-secondary py-5 text-xl font-black text-white shadow-xl shadow-secondary/20 transition-all hover:bg-primary hover:shadow-primary/30 active:scale-[0.98]"
+                        className="group relative flex w-full items-center justify-center gap-4 overflow-hidden rounded-[32px] bg-primary py-8 text-xl font-black uppercase tracking-[0.2em] text-white shadow-glow transition-all hover:bg-white hover:text-secondary hover:-translate-y-1 active:scale-[0.98]"
                       >
-                        Confirm Donation <ArrowRight size={24} />
+                        <span className="relative z-10">Confirm Donation</span>
+                        <div className="absolute inset-0 z-0 bg-gradient-to-r from-primary via-accent to-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                        <ArrowRight size={24} className="relative z-10" />
                       </button>
-
-                      <p className="text-center text-[10px] font-bold text-muted uppercase tracking-widest">
-                        100% of your donation goes to {reel.organizer}
-                      </p>
                     </div>
                   </div>
                 </div>

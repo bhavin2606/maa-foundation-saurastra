@@ -38,55 +38,67 @@ export default function HomePage() {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-white via-orange-50/50 to-white py-24 lg:py-40">
-        <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
-          <div className="flex-1 space-y-10 text-left">
-            <span className="inline-block rounded-full bg-primary/10 px-6 py-2 text-sm font-black text-primary border border-primary/20 uppercase tracking-widest">
-              Together, we can change lives
-            </span>
-            <div className="space-y-4">
-              <h1 className="text-6xl font-black leading-none text-secondary lg:text-8xl xl:text-9xl tracking-tighter">
-                Support a Cause, <br/>
-                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent italic">
-                  Make a Change
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-white pt-20 lg:pt-32">
+        {/* Animated Background Elements */}
+        <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[140px] animate-pulse" />
+        <div className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[120px] animate-float" />
+        
+        <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10 flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+          <div className="flex-1 space-y-12 text-left">
+            <div className="space-y-6">
+              <span className="inline-flex items-center gap-2 rounded-full glass-morphism px-6 py-2.5 text-xs font-black text-primary uppercase tracking-[0.3em]">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                </span>
+                Making a Difference
+              </span>
+              <h1 className="text-6xl font-black leading-[0.9] text-secondary lg:text-8xl xl:text-9xl tracking-tighter">
+                Fuel Hope, <br/>
+                <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic">
+                  Change Lives
                 </span>
               </h1>
             </div>
-            <p className="max-w-xl text-2xl leading-relaxed text-muted font-medium">
-              Maa Foundation is dedicated to empowering the underprivileged. Your
-              contribution creates a lasting impact.
+            <p className="max-w-xl text-xl lg:text-2xl leading-relaxed text-muted font-medium">
+              Maa Foundation is a catalyst for change, dedicated to empowering 
+              the underprivileged through sustainable community action.
             </p>
-            <div className="flex flex-wrap gap-8 pt-4">
+            <div className="flex flex-wrap gap-6 pt-4">
               <Link
                 href="/donate"
-                className="rounded-full bg-primary px-12 py-6 text-xl font-black text-white shadow-2xl shadow-primary/40 transition-all hover:bg-secondary hover:shadow-secondary/30 hover:-translate-y-1 active:scale-95"
+                className="group relative overflow-hidden rounded-full bg-secondary px-12 py-6 text-base font-black uppercase tracking-widest text-white shadow-premium transition-all hover:bg-primary hover:-translate-y-1 active:scale-95"
               >
-                Donate Now
+                <span className="relative z-10">Donate Now</span>
+                <div className="absolute inset-0 z-0 bg-gradient-to-r from-primary to-accent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               </Link>
               <Link
                 href="/campaigns"
-                className="rounded-full border-4 border-secondary/10 px-12 py-6 text-xl font-black text-secondary transition-all hover:border-primary hover:text-primary active:scale-95"
+                className="rounded-full border-2 border-secondary/10 px-12 py-6 text-base font-black uppercase tracking-widest text-secondary transition-all hover:border-primary hover:text-primary active:scale-95"
               >
-                Our Campaigns
+                Our Initiatives
               </Link>
             </div>
           </div>
-          <div className="relative flex-1 w-full max-w-2xl">
+          
+          <div className="relative flex-1 w-full max-w-2xl lg:mt-0">
             <div className="relative group">
-              <div className="absolute -inset-6 bg-gradient-to-r from-primary/30 to-accent/30 rounded-[60px] blur-3xl opacity-50 transition-all duration-700 group-hover:opacity-100" />
-              <div className="relative overflow-hidden rounded-[48px] shadow-2xl aspect-[4/5] lg:h-[650px] border-8 border-white">
+              <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-accent/20 rounded-[60px] blur-2xl opacity-50 transition-all duration-700 group-hover:opacity-80" />
+              <div className="relative overflow-hidden rounded-[56px] shadow-premium aspect-[4/5] lg:h-[700px] border-[12px] border-white glass-morphism">
                 <img
-                  src="https://images.unsplash.com/photo-1593113598332-cd288d649433?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                  alt="Helping children"
-                  className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                  src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                  alt="A child smiling"
+                  className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-105"
                 />
-                <div className="absolute bottom-8 left-8 flex items-center gap-4 rounded-3xl bg-white/95 px-8 py-6 shadow-2xl backdrop-blur-md border border-white/20">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/20">
-                    <Heart size={28} fill="white" color="white" />
+                
+                {/* Floating Impact Card */}
+                <div className="absolute bottom-10 left-10 right-10 glass-morphism p-8 rounded-[32px] border-white/40 flex items-center gap-6 animate-float">
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[20px] bg-primary text-white shadow-glow">
+                    <Heart size={32} fill="currentColor" />
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-2xl font-black text-secondary leading-tight">10K+</span>
-                    <span className="text-xs font-bold text-muted uppercase tracking-wider">Lives Changed</span>
+                  <div>
+                    <h4 className="text-3xl font-black text-secondary tracking-tighter leading-none">12,500+</h4>
+                    <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mt-1">Lives Impacted To Date</p>
                   </div>
                 </div>
               </div>
@@ -96,20 +108,23 @@ export default function HomePage() {
       </section>
 
       {/* Impact Stats */}
-      <section className="py-24 bg-white relative z-10 border-b border-gray-100">
-        <div className="w-full max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="grid gap-12 sm:grid-cols-3">
+      <section className="py-32 bg-surface relative z-10 overflow-hidden">
+        {/* Background texture */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:20px_20px]" />
+        
+        <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <div className="grid gap-8 sm:grid-cols-3">
             {stats.map((stat, i) => (
               <div
                 key={i}
-                className="group flex flex-col items-center text-center gap-8 rounded-[40px] border border-gray-100 bg-white p-12 shadow-sm transition-all hover:shadow-2xl hover:border-primary/20 hover:-translate-y-2"
+                className="group flex flex-col items-center text-center gap-8 glass-card p-12 transition-all duration-500 hover:-translate-y-3 hover:shadow-premium rounded-[48px]"
               >
-                <div className="flex h-24 w-24 items-center justify-center rounded-[30px] bg-secondary text-white transition-all duration-500 group-hover:bg-primary group-hover:rotate-12 shadow-xl group-hover:shadow-primary/30">
+                <div className="flex h-24 w-24 items-center justify-center rounded-[32px] bg-secondary text-white shadow-xl transition-all duration-500 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent group-hover:rotate-12 group-hover:shadow-glow">
                   {stat.icon}
                 </div>
-                <div>
-                  <h3 className="text-5xl font-black text-secondary tracking-tighter">{stat.value}</h3>
-                  <p className="text-lg font-bold text-muted/60 mt-2 uppercase tracking-widest">{stat.label}</p>
+                <div className="space-y-2">
+                  <h3 className="text-5xl font-black text-secondary tracking-tighter group-hover:text-primary transition-colors">{stat.value}</h3>
+                  <p className="text-[10px] font-black text-muted uppercase tracking-[0.3em]">{stat.label}</p>
                 </div>
               </div>
             ))}
@@ -118,60 +133,69 @@ export default function HomePage() {
       </section>
 
       {/* Featured Campaigns */}
-      <section className="bg-surface py-32">
+      <section className="bg-white py-40 relative">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-100 to-transparent" />
+        
         <div className="w-full max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-10">
-            <div className="space-y-4">
-              <span className="text-primary font-black tracking-[0.2em] uppercase text-sm">Our Initiatives</span>
-              <h2 className="text-6xl md:text-7xl font-black text-secondary tracking-tighter leading-none">
-                Featured <br/>
-                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  Campaigns
+          <div className="mb-24 flex flex-col md:flex-row md:items-end justify-between gap-12">
+            <div className="space-y-6">
+              <span className="text-primary font-black tracking-[0.4em] uppercase text-xs">Our Initiatives</span>
+              <h2 className="text-6xl md:text-8xl font-black text-secondary tracking-tighter leading-[0.85]">
+                Changing <br/>
+                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent italic">
+                  The World
                 </span>
               </h2>
             </div>
             <Link
               href="/campaigns"
-              className="inline-flex items-center gap-4 group text-2xl font-black text-primary transition-all hover:gap-8"
+              className="inline-flex items-center gap-6 group text-xl font-black text-secondary uppercase tracking-widest transition-all hover:text-primary"
             >
-              All Campaigns <ArrowRight size={32} className="transition-transform group-hover:translate-x-2" />
+              All Campaigns <ArrowRight size={28} className="transition-transform group-hover:translate-x-4 text-primary" />
             </Link>
           </div>
-          <div className="grid gap-16 md:grid-cols-3">
+          
+          <div className="grid gap-12 md:grid-cols-3">
             {campaigns.map((camp) => (
               <div
                 key={camp.id}
-                className="group overflow-hidden rounded-[48px] bg-white shadow-xl border border-gray-50 transition-all hover:shadow-2xl hover:-translate-y-2"
+                className="group relative overflow-hidden rounded-[56px] bg-white shadow-premium transition-all duration-700 hover:-translate-y-4"
               >
-                <div className="overflow-hidden relative aspect-[4/3]">
+                <div className="overflow-hidden relative aspect-[4/5]">
                   <img
                     src={camp.image}
                     alt={camp.title}
-                    className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                    className="h-full w-full object-cover transition-transform duration-[1.5s] group-hover:scale-110"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                  
+                  {/* Progress Overlay */}
+                  <div className="absolute top-6 right-6">
+                    <div className="glass-morphism h-20 w-20 rounded-full flex items-center justify-center border-white/40">
+                      <span className="text-xl font-black text-secondary">{camp.progress}%</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-8 p-10">
-                  <h3 className="text-3xl font-black text-secondary leading-tight">{camp.title}</h3>
-                  <div className="space-y-4">
-                    <div className="h-4 overflow-hidden rounded-full bg-gray-100">
+                
+                <div className="absolute bottom-0 left-0 right-0 p-10 space-y-6 transform transition-transform duration-500">
+                  <h3 className="text-3xl font-black text-white leading-tight tracking-tight">{camp.title}</h3>
+                  <div className="space-y-3">
+                    <div className="h-1.5 overflow-hidden rounded-full bg-white/20">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-primary to-accent transition-all duration-1000"
+                        className="h-full rounded-full bg-gradient-to-r from-primary to-accent shadow-glow transition-all duration-1000"
                         style={{ width: `${camp.progress}%` }}
                       />
                     </div>
-                    <div className="flex justify-between text-base font-black uppercase tracking-tight">
-                      <span className="text-primary">{camp.progress}%</span>
-                      <span className="text-muted">Goal: ₹{camp.goal}</span>
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/60">
+                      <span>Raised</span>
+                      <span>Target: ₹{camp.goal}</span>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between pt-6 border-t border-gray-100">
-                    <div className="flex flex-col">
-                      <span className="text-3xl font-black text-secondary">₹{camp.raised}</span>
-                      <span className="text-xs font-bold text-muted uppercase tracking-widest">Raised</span>
-                    </div>
+                  <div className="flex items-center justify-between pt-4">
+                    <span className="text-3xl font-black text-white">₹{camp.raised}</span>
                     <Link
                       href={`/campaigns/${camp.id}`}
-                      className="rounded-2xl bg-secondary text-white px-10 py-5 text-sm font-black transition-all hover:bg-primary shadow-lg hover:shadow-primary/30 active:scale-95"
+                      className="rounded-2xl glass-morphism border-white/20 text-white px-8 py-4 text-xs font-black uppercase tracking-widest transition-all hover:bg-white hover:text-secondary active:scale-95"
                     >
                       Donate
                     </Link>
@@ -184,23 +208,29 @@ export default function HomePage() {
       </section>
 
       {/* Reels Promo Section */}
-      <section className="py-40 bg-white">
-        <div className="w-full max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-6xl md:text-8xl font-black text-secondary tracking-tighter leading-none mb-10">
+      <section className="py-48 bg-secondary relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
+        
+        <div className="w-full max-w-5xl mx-auto px-6 text-center relative z-10">
+          <div className="inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-white/5 border border-white/10 text-primary mb-12 animate-float">
+            <Target size={40} />
+          </div>
+          <h2 className="text-6xl md:text-[10rem] font-black text-white tracking-tighter leading-[0.8] mb-12">
             Real Impact <br/>
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent italic">
-              In Action
+            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent italic bg-[length:200%_auto] animate-[gradient_4s_linear_infinite]">
+              In Motion
             </span>
           </h2>
-          <p className="text-2xl font-medium text-muted leading-relaxed mb-16">
-            Watch our latest reels and directly donate specific items like meals,
-            notebooks, or blankets.
+          <p className="text-xl md:text-2xl font-medium text-slate-400 leading-relaxed mb-20 max-w-3xl mx-auto">
+            Experience the journey of transformation. Watch our impact stories directly 
+            and support specific causes with a single click.
           </p>
           <Link
             href="/reels"
-            className="inline-flex items-center gap-4 rounded-full bg-primary px-16 py-8 text-2xl font-black text-white shadow-2xl shadow-primary/40 transition-all hover:bg-secondary hover:shadow-secondary/30 hover:-translate-y-2 active:scale-95"
+            className="group relative inline-flex items-center gap-6 rounded-full bg-primary px-16 py-8 text-xl font-black uppercase tracking-[0.2em] text-white shadow-glow transition-all hover:bg-white hover:text-secondary hover:-translate-y-2 active:scale-95"
           >
-            Watch Reels & Donate <ArrowRight size={32} />
+            Watch Reels & Support <ArrowRight size={28} className="transition-transform group-hover:translate-x-4" />
           </Link>
         </div>
       </section>

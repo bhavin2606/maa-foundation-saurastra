@@ -55,10 +55,21 @@ export default function AdminDonationsPage() {
                 </td>
                 <td className="px-6 py-4 text-sm font-semibold text-primary">₹{d.amount.toLocaleString()}</td>
                 <td className="px-6 py-4 text-sm text-muted">{d.itemLabel || "General Contribution"}</td>
-                <td className="px-6 py-4 text-sm text-muted">Online</td>
+                <td className="px-6 py-4 text-sm text-muted">
+                  {d.paymentMethod === "SCAN_AND_PAY" ? (
+                    <div className="flex flex-col">
+                      <span className="font-medium text-amber-600">Scan & Pay</span>
+                      {d.screenshotUrl && (
+                        <a href={d.screenshotUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] font-bold text-primary hover:underline uppercase">View Proof</a>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="font-medium text-emerald-600">Online</span>
+                  )}
+                </td>
                 <td className="px-6 py-4 text-sm text-muted">{new Date(d.createdAt).toLocaleDateString()}</td>
                 <td className="px-6 py-4">
-                  <span className={`rounded-full px-3 py-1 text-xs font-medium ${d.status === "COMPLETED" ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600"}`}>
+                  <span className={`rounded-full px-3 py-1 text-xs font-bold ${d.status === "SUCCESS" ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600"}`}>
                     {d.status}
                   </span>
                 </td>
