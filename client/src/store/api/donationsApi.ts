@@ -13,7 +13,9 @@ export interface Donation {
   screenshotUrl?: string;
   reelId?: string;
   campaignId?: string;
-  status: string;
+  paymentStatus: string;
+  adminApproved?: boolean;
+  adminApprovedAt?: string;
   createdAt: string;
 }
 
@@ -31,16 +33,24 @@ export const donationsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Donations", "Campaigns"],
     }),
-    createRazorpayOrder: builder.mutation<any, { amount: number }>({
+    createRazorpayOrder: builder.mutation<any, { amount: number; name: string; email: string }>({
       query: (body) => ({
-        url: "/donations/create-order",
+        url: "/payment/create-order",
         method: "POST",
         body,
       }),
     }),
     verifyRazorpayPayment: builder.mutation<Donation, any>({
       query: (body) => ({
-        url: "/donations/verify-payment",
+        url: "/payment/verify",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Donations", "Campaigns"],
+    }),
+    createManualPayment: builder.mutation<any, FormData>({
+      query: (body) => ({
+        url: "/payment/manual",
         method: "POST",
         body,
       }),
@@ -53,5 +63,6 @@ export const {
   useGetDonationsQuery, 
   useCreateDonationMutation,
   useCreateRazorpayOrderMutation,
-  useVerifyRazorpayPaymentMutation
+  useVerifyRazorpayPaymentMutation,
+  useCreateManualPaymentMutation
 } = donationsApi;

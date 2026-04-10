@@ -30,9 +30,13 @@ export class DonationsService {
   }
 
   static async create(data: any) {
-    const { amount, quantity, itemLabel, donorName, donorEmail, phone, message, paymentMethod, screenshotUrl, reelId, campaignId, status } = data;
+    const { 
+      amount, quantity, itemLabel, donorName, donorEmail, phone, 
+      message, paymentMethod, screenshotUrl, reelId, campaignId, 
+      paymentStatus, razorpayOrderId, razorpayPaymentId, razorpaySignature 
+    } = data;
     
-    const donation = await prisma.donation.create({
+    return await prisma.donation.create({
       data: {
         amount: parseFloat(amount),
         quantity: parseInt(quantity) || 1,
@@ -45,25 +49,16 @@ export class DonationsService {
         screenshotUrl,
         reelId,
         campaignId,
-        status: status || (paymentMethod === "SCAN_AND_PAY" ? "PENDING" : "SUCCESS"),
+        paymentStatus: paymentStatus || "pending",
+        razorpayOrderId,
+        razorpayPaymentId,
+        razorpaySignature,
       },
     });
-
-    if (donation.status === "SUCCESS" && campaignId) {
-      await prisma.campaign.update({
-        where: { id: campaignId },
-        data: {
-          raised: {
-            increment: parseFloat(amount),
-          },
-        },
-      });
-    }
-
-    return donation;
   }
 
-  static async createRazorpayOrder(amount: number) {
+  static async createRazorpayOrder(donationData: any) {
+    const { amount } = donationData;
     const options = {
       amount: Math.round(amount * 100), // amount in the smallest currency unit (paise)
       currency: "INR",
@@ -72,7 +67,21 @@ export class DonationsService {
 
     try {
       const order = await razorpay.orders.create(options);
-      return order;
+      
+      // Save pending donation
+      const donation = await this.create({
+        ...donationData,
+        paymentMethod: "razorpay",
+        paymentStatus: "pending",
+        razorpayOrderId: order.id
+      });
+
+      return {
+        orderId: order.id,
+        amount: order.amount,
+        currency: order.currency,
+        donationId: donation.id
+      };
     } catch (error) {
       console.error("Razorpay order creation failed:", error);
       throw new Error("Failed to create Razorpay order");
@@ -81,10 +90,10 @@ export class DonationsService {
 
   static async verifyRazorpayPayment(paymentData: any) {
     const { 
+      donationId,
       razorpay_order_id, 
       razorpay_payment_id, 
-      razorpay_signature,
-      donationData 
+      razorpay_signature 
     } = paymentData;
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
@@ -95,14 +104,54 @@ export class DonationsService {
       .digest("hex");
 
     if (expectedSignature === razorpay_signature) {
-      // Payment is valid, create/update donation
-      return await this.create({
-        ...donationData,
-        status: "SUCCESS",
-        paymentMethod: "GATEWAY"
+      // Payment is valid, update donation
+      const donation = await prisma.donation.update({
+        where: { id: donationId },
+        data: {
+          paymentStatus: "success",
+          razorpayPaymentId: razorpay_payment_id,
+          razorpaySignature: razorpay_signature,
+        },
       });
+
+      // Update campaign raised amount if applicable
+      if (donation.campaignId) {
+        await prisma.campaign.update({
+          where: { id: donation.campaignId },
+          data: {
+            raised: {
+              increment: donation.amount,
+            },
+          },
+        });
+      }
+
+      // Send success email
+      const { EmailService } = await import("./email.service.js");
+      await EmailService.sendPaymentSuccessEmail(donation.donorEmail, donation);
+
+      return donation;
     } else {
       throw new Error("Invalid payment signature");
     }
+  }
+
+  static async createManualPayment(data: any) {
+    const { amount, donorName, donorEmail, phone, message, screenshotUrl, reelId, campaignId } = data;
+    
+    return await prisma.donation.create({
+      data: {
+        amount: parseFloat(amount),
+        donorName,
+        donorEmail,
+        phone,
+        message,
+        paymentMethod: "manual",
+        paymentStatus: "waiting_for_admin",
+        screenshotUrl,
+        reelId,
+        campaignId,
+      },
+    });
   }
 }

@@ -25,7 +25,7 @@ export default function CampaignsPage() {
           </span>
           <h1 className="text-6xl md:text-9xl font-black text-secondary tracking-tighter leading-[0.85] mb-12">
             Active <br/>
-            <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic">
+            <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic px-8">
               Campaigns
             </span>
           </h1>

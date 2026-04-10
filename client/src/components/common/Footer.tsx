@@ -11,13 +11,14 @@ export default function Footer() {
         <div className="grid gap-16 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="space-y-8">
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent text-white shadow-glow transition-transform group-hover:scale-110">
-                <Heart fill="currentColor" size={22} />
+            <Link href="/" className="flex items-center gap-3 group transition-all hover:opacity-90">
+              <div className="h-10 w-auto min-w-[130px] rounded-xl bg-white p-1 shadow-glow transition-transform group-hover:scale-105">
+                <img 
+                  src="/logo.png" 
+                  alt="Maa Foundation Saurastra" 
+                  className="h-full w-auto object-contain"
+                />
               </div>
-              <span className="text-2xl font-black text-white tracking-tighter uppercase">
-                Maa<span className="text-primary italic">Foundation</span>
-              </span>
             </Link>
             <p className="text-base leading-relaxed text-slate-400 font-medium">
               Empowering the underprivileged through compassion, community, and

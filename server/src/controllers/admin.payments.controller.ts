@@ -1,0 +1,78 @@
+import { Request, Response } from "express";
+import { prisma } from "../lib/prisma.js";
+import { EmailService } from "../services/email.service.js";
+
+export class AdminPaymentsController {
+  static async getManualPayments(req: Request, res: Response) {
+    try {
+      const payments = await prisma.donation.findMany({
+        where: {
+          paymentMethod: "manual",
+          paymentStatus: "waiting_for_admin",
+        },
+        orderBy: { createdAt: "desc" },
+      });
+      res.json(payments);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch manual payments" });
+    }
+  }
+
+  static async approveManualPayment(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      
+      const donation = await prisma.donation.update({
+        where: { id },
+        data: {
+          paymentStatus: "success",
+          adminApproved: true,
+          adminApprovedAt: new Date(),
+        },
+      });
+
+      // Update campaign raised amount if applicable
+      if (donation.campaignId) {
+        await prisma.campaign.update({
+          where: { id: donation.campaignId },
+          data: {
+            raised: {
+              increment: donation.amount,
+            },
+          },
+        });
+      }
+
+      // Send success email
+      await EmailService.sendPaymentSuccessEmail(donation.donorEmail, donation);
+
+      res.json({
+        success: true,
+        message: "Manual payment approved successfully"
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to approve manual payment" });
+    }
+  }
+
+  static async rejectManualPayment(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      
+      await prisma.donation.update({
+        where: { id },
+        data: {
+          paymentStatus: "failed",
+          adminApproved: false,
+        },
+      });
+
+      res.json({
+        success: true,
+        message: "Manual payment rejected"
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to reject manual payment" });
+    }
+  }
+}

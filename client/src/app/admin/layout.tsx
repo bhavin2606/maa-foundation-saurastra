@@ -71,11 +71,17 @@ export default function AdminLayout({
       {/* Sidebar */}
       <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-gray-200 bg-white shadow-premium">
         {/* Logo */}
-        <div className="flex items-center gap-2 border-b border-gray-100 px-6 py-5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 text-primary">
-            <Heart fill="currentColor" size={24} />
-          </div>
-          <span className="text-lg font-black text-secondary tracking-tight">Admin <span className="text-primary italic">Panel</span></span>
+        <div className="flex items-center gap-2 border-b border-gray-100 px-6 py-4">
+          <Link href="/admin" className="flex items-center gap-2 transition-all hover:opacity-90">
+            <div className="h-8 w-auto min-w-[100px]">
+              <img 
+                src="/logo.png" 
+                alt="Maa Foundation" 
+                className="h-full w-auto object-contain"
+              />
+            </div>
+            <span className="text-xs font-black text-secondary uppercase tracking-[0.2em] border-l border-gray-200 pl-3">Admin</span>
+          </Link>
         </div>
 
         {/* Nav Links */}

@@ -8,7 +8,13 @@ import { contactRouter } from "./routes/contact.js";
 import { reelsRouter } from "./routes/reels.js";
 import { dashboardRouter } from "./routes/dashboard.js";
 import { authRouter } from "./routes/auth.js";
+import { adminRouter } from "./routes/admin.js";
 import { authMiddleware } from "./middleware/auth.middleware.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -53,11 +59,16 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Serve static files from uploads folder
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
 app.use("/api/campaigns", campaignsRouter);
 app.use("/api/donations", donationsRouter);
+app.use("/api/payment", donationsRouter);
 app.use("/api/contact", contactRouter);
 app.use("/api/reels", reelsRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/admin", adminRouter);
 app.use("/api/dashboard", authMiddleware, dashboardRouter);
 
 app.get("/api/health", (req, res) => {

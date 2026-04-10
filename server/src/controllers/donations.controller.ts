@@ -168,7 +168,7 @@ export class DonationsController {
    * @swagger
    * /api/donations/create-order:
    *   post:
-   *     summary: Create a new Razorpay order
+   *     summary: Create a new Razorpay order and pending donation
    *     tags: [Donations]
    *     requestBody:
    *       required: true
@@ -179,18 +179,32 @@ export class DonationsController {
    *             properties:
    *               amount:
    *                 type: number
+   *               name:
+   *                 type: string
+   *               email:
+   *                 type: string
    *     responses:
    *       200:
    *         description: The Razorpay order was successfully created
    */
   static async createOrder(req: Request, res: Response) {
     try {
-      const { amount } = req.body;
-      if (!amount) {
-        return res.status(400).json({ error: "Amount is required" });
+      const { amount, name, email, ...otherData } = req.body;
+      if (!amount || !name || !email) {
+        return res.status(400).json({ error: "Amount, name, and email are required" });
       }
-      const order = await DonationsService.createRazorpayOrder(amount);
-      res.json(order);
+      
+      const order = await DonationsService.createRazorpayOrder({
+        amount,
+        donorName: name,
+        donorEmail: email,
+        ...otherData
+      });
+
+      res.json({
+        success: true,
+        ...order
+      });
     } catch (error) {
       console.error("Error creating Razorpay order:", error);
       res.status(500).json({ error: "Failed to create payment order" });
@@ -216,10 +230,56 @@ export class DonationsController {
   static async verifyPayment(req: Request, res: Response) {
     try {
       const donation = await DonationsService.verifyRazorpayPayment(req.body);
-      res.json(donation);
+      
+      return res.status(200).json({
+        success: true,
+        message: "Payment successful",
+        paymentId: req.body.razorpay_payment_id,
+        donationId: donation.id
+      });
     } catch (error) {
       console.error("Payment verification failed:", error);
-      res.status(400).json({ error: "Payment verification failed" });
+      res.status(400).json({ 
+        success: false,
+        message: "Payment verification failed" 
+      });
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/donations/manual:
+   *   post:
+   *     summary: Submit manual payment with screenshot
+   *     tags: [Donations]
+   *     responses:
+   *       200:
+   *         description: Screenshot submitted
+   */
+  static async manualPayment(req: Request, res: Response) {
+    try {
+      const { name, email, amount, ...otherData } = req.body;
+      const screenshot = req.file;
+
+      if (!screenshot) {
+        return res.status(400).json({ error: "Screenshot is required" });
+      }
+
+      await DonationsService.createManualPayment({
+        donorName: name,
+        donorEmail: email,
+        amount,
+        screenshotUrl: `/uploads/screenshots/${screenshot.filename}`,
+        ...otherData
+      });
+
+      res.json({
+        success: true,
+        message: "Payment screenshot submitted. Waiting for admin approval."
+      });
+    } catch (error) {
+      console.error("Error submitting manual payment:", error);
+      res.status(500).json({ error: "Failed to submit manual payment" });
     }
   }
 }

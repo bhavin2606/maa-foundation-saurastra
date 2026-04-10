@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { 
-  useCreateDonationMutation, 
+  useCreateManualPaymentMutation, 
   useCreateRazorpayOrderMutation, 
   useVerifyRazorpayPaymentMutation 
 } from "@/store/api/donationsApi";
@@ -18,7 +18,7 @@ interface DonateFormData {
   phone: string;
   amount: number;
   message: string;
-  paymentMethod: "GATEWAY" | "SCAN_AND_PAY";
+  paymentMethod: "razorpay" | "manual";
 }
 
 const presets = [500, 1000, 2500, 5000, 10000];
@@ -30,14 +30,15 @@ function DonateContent() {
   const reelId = searchParams.get("reelId");
   const initialQty = parseInt(searchParams.get("quantity") || "1");
 
-  const [paymentMethod, setPaymentMethod] = useState<"GATEWAY" | "SCAN_AND_PAY">("GATEWAY");
-  const [screenshot, setScreenshot] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "manual">("razorpay");
+  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
   const { data: campaign } = useGetCampaignByIdQuery(campaignId || "", { skip: !campaignId });
   const { data: reel } = useGetReelByIdQuery(reelId || "", { skip: !reelId });
 
-  const [createDonation] = useCreateDonationMutation();
+  const [createManualPayment] = useCreateManualPaymentMutation();
   const [createRazorpayOrder] = useCreateRazorpayOrderMutation();
   const [verifyRazorpayPayment] = useVerifyRazorpayPaymentMutation();
   
@@ -50,7 +51,7 @@ function DonateContent() {
   } = useForm<DonateFormData>({ 
     defaultValues: { 
       amount: 1000,
-      paymentMethod: "GATEWAY"
+      paymentMethod: "razorpay"
     } 
   });
 
@@ -65,9 +66,10 @@ function DonateContent() {
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setScreenshotFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setScreenshot(reader.result as string);
+        setScreenshotPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -79,8 +81,8 @@ function DonateContent() {
         amount: data.amount,
         quantity: reelId ? initialQty : 1,
         itemLabel: reel ? reel.itemLabel : (campaign ? campaign.title : "General Donation"),
-        donorName: data.name,
-        donorEmail: data.email,
+        name: data.name,
+        email: data.email,
         phone: data.phone,
         message: data.message,
         paymentMethod: data.paymentMethod,
@@ -88,30 +90,46 @@ function DonateContent() {
         reelId: reelId || undefined,
       };
 
-      if (data.paymentMethod === "SCAN_AND_PAY") {
-        await createDonation({
-          ...donationData,
-          screenshotUrl: screenshot || undefined,
-          status: "PENDING",
-        }).unwrap();
+      if (data.paymentMethod === "manual") {
+        if (!screenshotFile) {
+          alert("Please upload a payment screenshot.");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("name", data.name);
+        formData.append("email", data.email);
+        formData.append("amount", data.amount.toString());
+        formData.append("phone", data.phone);
+        formData.append("message", data.message);
+        formData.append("paymentMethod", "manual");
+        formData.append("screenshot", screenshotFile);
+        if (campaignId) formData.append("campaignId", campaignId);
+        if (reelId) formData.append("reelId", reelId);
+
+        await createManualPayment(formData).unwrap();
         setIsSuccess(true);
         window.scrollTo(0, 0);
       } else {
         // Razorpay flow
-        const order = await createRazorpayOrder({ amount: data.amount }).unwrap();
+        const order = await createRazorpayOrder({ 
+          amount: data.amount,
+          name: data.name,
+          email: data.email 
+        }).unwrap();
         
         const options = {
-          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_YourKeyIdHere", // In real app, this should be an env var
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_SaEBC54CQIXUNj",
           amount: order.amount,
           currency: order.currency,
           name: "Maa Foundation",
           description: donationData.itemLabel,
-          order_id: order.id,
+          order_id: order.orderId,
           handler: async (response: any) => {
             try {
               await verifyRazorpayPayment({
                 ...response,
-                donationData
+                donationId: order.donationId
               }).unwrap();
               setIsSuccess(true);
               window.scrollTo(0, 0);
@@ -126,7 +144,7 @@ function DonateContent() {
             contact: data.phone,
           },
           theme: {
-            color: "#E22D6E", // Theme color of Maa Foundation
+            color: "#E22D6E",
           },
         };
 
@@ -145,9 +163,13 @@ function DonateContent() {
         <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 text-emerald-500">
           <CheckCircle2 size={40} />
         </div>
-        <h2 className="text-3xl font-bold text-secondary">Donation Received!</h2>
+        <h2 className="text-3xl font-bold text-secondary">
+          {paymentMethod === "manual" ? "Screenshot Submitted!" : "Thank you! Your payment was successful."}
+        </h2>
         <p className="mt-4 max-w-md text-muted">
-          Thank you for your generous contribution. {paymentMethod === "SCAN_AND_PAY" ? "Our team will verify your payment screenshot and update the status soon." : "Your support makes a real difference in our mission."}
+          {paymentMethod === "manual" 
+            ? "Your payment screenshot has been submitted. Once admin verifies it, you will receive a confirmation email." 
+            : "Your support makes a real difference in our mission."}
         </p>
         <button
           onClick={() => router.push("/")}
@@ -231,16 +253,16 @@ function DonateContent() {
               <button
                 type="button"
                 onClick={() => {
-                  setPaymentMethod("GATEWAY");
-                  setValue("paymentMethod", "GATEWAY");
+                  setPaymentMethod("razorpay");
+                  setValue("paymentMethod", "razorpay");
                 }}
                 className={`flex items-center gap-4 rounded-2xl border-2 p-4 transition-all ${
-                  paymentMethod === "GATEWAY"
+                  paymentMethod === "razorpay"
                     ? "border-primary bg-primary/5"
                     : "border-gray-50 bg-surface hover:border-gray-200"
                 }`}
               >
-                <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${paymentMethod === "GATEWAY" ? "bg-primary text-white" : "bg-gray-200 text-muted"}`}>
+                <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${paymentMethod === "razorpay" ? "bg-primary text-white" : "bg-gray-200 text-muted"}`}>
                   <CreditCard size={20} />
                 </div>
                 <div className="text-left leading-tight">
@@ -252,16 +274,16 @@ function DonateContent() {
               <button
                 type="button"
                 onClick={() => {
-                  setPaymentMethod("SCAN_AND_PAY");
-                  setValue("paymentMethod", "SCAN_AND_PAY");
+                  setPaymentMethod("manual");
+                  setValue("paymentMethod", "manual");
                 }}
                 className={`flex items-center gap-4 rounded-2xl border-2 p-4 transition-all ${
-                  paymentMethod === "SCAN_AND_PAY"
+                  paymentMethod === "manual"
                     ? "border-primary bg-primary/5"
                     : "border-gray-50 bg-surface hover:border-gray-200"
                 }`}
               >
-                <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${paymentMethod === "SCAN_AND_PAY" ? "bg-primary text-white" : "bg-gray-200 text-muted"}`}>
+                <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${paymentMethod === "manual" ? "bg-primary text-white" : "bg-gray-200 text-muted"}`}>
                   <QrCode size={20} />
                 </div>
                 <div className="text-left leading-tight">
@@ -273,7 +295,7 @@ function DonateContent() {
           </div>
 
           {/* Scan & Pay Specific UI */}
-          {paymentMethod === "SCAN_AND_PAY" && (
+          {paymentMethod === "manual" && (
             <div className="space-y-6 rounded-3xl bg-amber-50/50 p-6 border border-amber-100 border-dashed">
               <div className="flex flex-col items-center text-center">
                 <div className="mb-4 bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
@@ -297,9 +319,9 @@ function DonateContent() {
                     onChange={onFileChange}
                     className="absolute inset-0 z-10 opacity-0 cursor-pointer"
                   />
-                  {screenshot ? (
+                  {screenshotPreview ? (
                     <div className="flex items-center gap-3">
-                      <img src={screenshot} className="h-20 w-20 rounded-lg object-cover" alt="Screenshot" />
+                      <img src={screenshotPreview} className="h-20 w-20 rounded-lg object-cover" alt="Screenshot" />
                       <div>
                         <p className="text-xs font-bold text-emerald-500">Screenshot Uploaded!</p>
                         <p className="text-[10px] text-muted underline">Click to change</p>
@@ -364,10 +386,10 @@ function DonateContent() {
 
           <button
             type="submit"
-            disabled={isSubmitting || (paymentMethod === "SCAN_AND_PAY" && !screenshot)}
+            disabled={isSubmitting || (paymentMethod === "manual" && !screenshotFile)}
             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-accent py-5 text-lg font-black text-white shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
           >
-            {paymentMethod === "SCAN_AND_PAY" ? "I Have Paid & Uploaded" : `Process Payment of ₹${selectedAmount?.toLocaleString() || ""}`}
+            {paymentMethod === "manual" ? "I Have Paid & Uploaded" : `Process Payment of ₹${selectedAmount?.toLocaleString() || ""}`}
           </button>
 
           <p className="text-center text-[10px] font-bold text-muted uppercase tracking-widest flex items-center justify-center gap-1">
@@ -435,7 +457,7 @@ export default function DonatePage() {
         <div className="mx-auto max-w-3xl px-6">
           <h1 className="text-4xl font-black lg:text-6xl tracking-tighter uppercase leading-none">
             Make an{" "}
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent italic">
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent italic px-6">
               Impact
             </span>
           </h1>

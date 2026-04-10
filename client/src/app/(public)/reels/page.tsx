@@ -57,163 +57,171 @@ export default function ReelsPage() {
 
       {/* Page Header */}
       <div className="relative z-10 pt-40 pb-20 text-center">
-        <div className="container px-6">
+        <div className="container mx-auto px-6">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-2.5 text-xs font-black text-primary uppercase tracking-[0.3em] mb-8 lg:mb-12">
             Real Stories
           </span>
-          <h1 className="text-6xl font-black text-white lg:text-[10rem] tracking-tighter uppercase leading-[0.8]">
+          <h1 className="text-6xl md:text-8xl lg:text-[10rem] font-black text-white tracking-tighter uppercase leading-[0.8]">
             Impact <br/>
-            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent italic bg-[length:200%_auto] animate-[gradient_4s_linear_infinite]">
+            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent italic bg-[length:200%_auto] animate-[gradient_4s_linear_infinite] px-4 md:px-10">
               In Motion
             </span>
           </h1>
-          <p className="mt-12 text-xl font-medium text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-12 text-lg md:text-xl font-medium text-slate-400 max-w-2xl mx-auto leading-relaxed">
             Witness the change your support creates. Watch, engage, and 
             donate directly to specific causes from the feed.
           </p>
         </div>
       </div>
 
-      {/* Reels Feed */}
-      <div className="mx-auto flex max-w-2xl flex-col gap-24 px-4 py-20 relative z-10">
-        {reels.map((reel: any) => {
-          let embedUrl = null;
-          const igMatch = reel.reelUrl.match(/instagram\.com\/reel\/([A-Za-z0-9_-]+)/);
-          if (igMatch) embedUrl = `https://www.instagram.com/reel/${igMatch[1]}/embed/captioned/`;
-          const isFB = reel.reelUrl.includes("facebook.com");
-          if (isFB) embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(reel.reelUrl)}&show_text=false&t=0&autoplay=true&mute=true&container_width=true`;
+      {/* Reels Gallery Grid */}
+      <div className="container mx-auto px-6 py-20 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {reels.map((reel: any) => {
+            let embedUrl = null;
+            const igMatch = reel.reelUrl.match(/instagram\.com\/reel\/([A-Za-z0-9_-]+)/);
+            if (igMatch) embedUrl = `https://www.instagram.com/reel/${igMatch[1]}/embed/captioned/`;
+            const isFB = reel.reelUrl.includes("facebook.com");
+            if (isFB) embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(reel.reelUrl)}&show_text=false&t=0&autoplay=true&mute=true&container_width=true`;
 
-          return (
-            <div
-              key={reel.id}
-              className="relative overflow-hidden rounded-[56px] bg-black shadow-premium border border-white/5 group"
-              style={{ height: "850px" }}
-            >
-              {/* Video/Embed Container */}
-              <div className="absolute inset-0 bg-black">
-                {embedUrl ? (
-                  <iframe
-                    src={embedUrl}
-                    className="h-full w-full border-0"
-                    allowFullScreen
-                    scrolling="no"
-                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                  />
-                ) : reel.videoUrl ? (
-                  <video
-                    src={reel.videoUrl}
-                    poster={reel.posterUrl}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <img
-                    src={reel.posterUrl}
-                    alt={reel.caption}
-                    className="h-full w-full object-cover opacity-50 transition-transform duration-1000 group-hover:scale-105"
-                  />
+            return (
+              <div
+                key={reel.id}
+                className="group relative flex flex-col items-center"
+              >
+                {/* Reel Card */}
+                <div 
+                  className="relative w-full aspect-[9/16] overflow-hidden rounded-[48px] bg-black shadow-2xl border border-white/5 transition-all duration-700 hover:scale-[1.02] hover:shadow-glow/20"
+                >
+                  {/* Video/Embed Container */}
+                  <div className="absolute inset-0 bg-black">
+                    {embedUrl ? (
+                      <iframe
+                        src={embedUrl}
+                        className="h-full w-full border-0"
+                        allowFullScreen
+                        scrolling="no"
+                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                      />
+                    ) : reel.videoUrl ? (
+                      <video
+                        src={reel.videoUrl}
+                        poster={reel.posterUrl}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <img
+                        src={reel.posterUrl}
+                        alt={reel.caption}
+                        className="h-full w-full object-cover opacity-60 transition-transform duration-1000 group-hover:scale-110"
+                      />
+                    )}
+                  </div>
+
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
+
+                  {/* Top Badge */}
+                  <div className="absolute top-6 left-6 pointer-events-none">
+                    <div className="glass-morphism px-4 py-2 rounded-2xl border-white/10 flex items-center gap-2 scale-90 origin-left">
+                      <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                      <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none">Live Impact</span>
+                    </div>
+                  </div>
+
+                  {/* Info Overlay (Visible on Hover) */}
+                  <div className="absolute inset-0 flex flex-col justify-end p-8 translate-y-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 bg-gradient-to-t from-secondary/90 via-secondary/40 to-transparent">
+                    <p className="text-sm font-medium text-white/80 line-clamp-2 mb-6 leading-relaxed">
+                      {reel.caption}
+                    </p>
+                    <div className="flex items-center gap-6 text-white/60 mb-2">
+                       <div className="flex items-center gap-2">
+                         <Heart size={16} className="text-primary" />
+                         <span className="text-xs font-black tracking-widest">{reel.likes || "1.2k"}</span>
+                       </div>
+                       <div className="flex items-center gap-2">
+                         <MessageCircle size={16} className="text-accent" />
+                         <span className="text-xs font-black tracking-widest">{reel.comments || "48"}</span>
+                       </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Donation Action Card - Slightly overlapping or below */}
+                <div className="w-[90%] -mt-12 relative z-20">
+                  <button
+                    onClick={() => setActiveDonationId(reel.id)}
+                    className="group/btn relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-[32px] glass-morphism p-3 pr-6 border-white/20 transition-all duration-500 hover:shadow-glow hover:-translate-y-1 active:scale-95"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-accent text-white shadow-lg group-hover/btn:rotate-12 transition-transform">
+                        <Heart fill="white" size={20} />
+                      </div>
+                      <div className="flex flex-col text-left">
+                        <span className="text-[9px] font-black text-white/60 uppercase tracking-[0.2em] mb-0.5">Support</span>
+                        <span className="text-sm font-black text-white truncate max-w-[120px]">{reel.itemLabel}</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-lg font-black text-white">₹{reel.itemPrice}</span>
+                    </div>
+                  </button>
+                </div>
+
+                {/* Selection Modal (Simplified Overlay) */}
+                {activeDonationId === reel.id && (
+                  <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="w-full max-w-md bg-secondary rounded-[48px] p-10 border border-white/10 shadow-premium animate-in zoom-in-95 duration-300">
+                      <div className="mb-10 flex items-center justify-between">
+                        <div>
+                          <h3 className="text-2xl font-black text-white tracking-tight uppercase">Donation Details</h3>
+                          <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mt-2">100% Direct Impact</p>
+                        </div>
+                        <button
+                          onClick={() => setActiveDonationId(null)}
+                          className="rounded-full bg-white/5 p-4 text-white hover:bg-white/10 transition-all active:scale-90"
+                        >
+                          <X size={24} />
+                        </button>
+                      </div>
+
+                      <div className="space-y-8">
+                        <div className="rounded-[32px] bg-white/5 border border-white/10 p-6 flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <button
+                              onClick={() => handleQuantityChange(reel.id, ((quantities[reel.id] || 1) - 1).toString())}
+                              className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white hover:bg-primary transition-all"
+                            > - </button>
+                            <span className="text-2xl font-black text-white min-w-[30px] text-center">{quantities[reel.id] || 1}</span>
+                            <button
+                              onClick={() => handleQuantityChange(reel.id, ((quantities[reel.id] || 1) + 1).toString())}
+                              className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white hover:bg-primary transition-all"
+                            > + </button>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">Total</p>
+                            <p className="text-2xl font-black text-white">₹{((quantities[reel.id] || 1) * reel.itemPrice).toLocaleString()}</p>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => handleDonate(reel)}
+                          className="w-full rounded-[24px] bg-primary py-6 text-sm font-black uppercase tracking-[0.2em] text-white shadow-glow transition-all hover:bg-white hover:text-secondary active:scale-[0.98]"
+                        >
+                          Confirm & Pay
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
-
-              {/* Top Overlay Stats */}
-              <div className="absolute top-8 left-8 right-8 flex justify-between items-start pointer-events-none">
-                <div className="glass-morphism px-4 py-2 rounded-2xl border-white/10 flex items-center gap-3">
-                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                  <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none">Live Impact</span>
-                </div>
-              </div>
-
-              {/* Donation Overlay Button */}
-              <div className="absolute bottom-12 left-0 right-0 px-8 flex justify-center">
-                <button
-                  onClick={() => setActiveDonationId(reel.id)}
-                  className="group relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-[32px] glass-morphism p-3 pr-8 border-white/20 transition-all duration-500 hover:scale-[1.02] active:scale-95 cursor-pointer shadow-premium"
-                >
-                  <div className="flex items-center gap-5">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-[24px] bg-gradient-to-br from-primary to-accent text-white shadow-glow transition-transform group-hover:rotate-12">
-                      <Heart fill="white" size={28} />
-                    </div>
-                    <div className="flex flex-col text-left">
-                      <span className="text-xs font-black text-white uppercase tracking-[0.2em] mb-1">Donate {reel.itemLabel}</span>
-                      <span className="text-lg font-black text-primary">₹{reel.itemPrice} <span className="text-[10px] text-white/40 uppercase tracking-widest font-bold">/ unit</span></span>
-                    </div>
-                  </div>
-                  <div className="hidden sm:flex items-center gap-3 text-white font-black uppercase text-[10px] tracking-widest group-hover:text-primary transition-colors">
-                    SUPPORT NOW <ArrowRight size={18} className="text-primary transition-transform group-hover:translate-x-2" />
-                  </div>
-                </button>
-              </div>
-
-              {/* Donation Selection Popup */}
-              {activeDonationId === reel.id && (
-                <div className="absolute inset-0 z-20 flex items-end bg-black/60 backdrop-blur-md animate-in fade-in duration-500">
-                  <div className="w-full rounded-t-[56px] glass-morphism p-10 border-white/20 shadow-premium animate-in slide-in-from-bottom duration-700">
-                    <div className="mb-10 flex items-center justify-between">
-                      <div>
-                        <h3 className="text-3xl font-black text-white tracking-tight leading-none mb-2">Direct Contribution</h3>
-                        <p className="text-xs font-bold text-white/40 uppercase tracking-[0.2em]">100% Goes to the cause</p>
-                      </div>
-                      <button
-                        onClick={() => setActiveDonationId(null)}
-                        className="rounded-full bg-white/5 p-4 text-white hover:bg-white/10 transition-all active:scale-90"
-                      >
-                        <X size={28} />
-                      </button>
-                    </div>
-
-                    <div className="grid gap-8">
-                      <div className="grid grid-cols-2 gap-8 rounded-[40px] bg-white/5 border border-white/10 p-8">
-                        <div>
-                          <label className="text-[10px] font-black text-primary uppercase tracking-[0.3em] leading-none block mb-6 px-1">How Many?</label>
-                          <div className="flex items-center gap-6">
-                            <button
-                              onClick={() => handleQuantityChange(reel.id, (quantities[reel.id] - 5).toString())}
-                              className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 border border-white/10 font-black text-white hover:bg-primary transition-all active:scale-90"
-                            >
-                              -
-                            </button>
-                            <input
-                              type="number"
-                              min={1}
-                              value={quantities[reel.id] || 1}
-                              onChange={(e) => handleQuantityChange(reel.id, e.target.value)}
-                              className="w-16 bg-transparent text-center text-4xl font-black text-white outline-none"
-                            />
-                            <button
-                              onClick={() => handleQuantityChange(reel.id, (quantities[reel.id] + 5).toString())}
-                              className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 border border-white/10 font-black text-white hover:bg-primary transition-all active:scale-90"
-                            >
-                              +
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="text-right flex flex-col justify-center border-l border-white/10 pl-8">
-                          <label className="text-[10px] font-black text-primary uppercase tracking-[0.3em] leading-none block mb-4">Total Gift</label>
-                          <div className="text-5xl font-black text-white tracking-tighter">
-                            ₹{((quantities[reel.id] || (activeDonationId === reel.id ? 1 : 0)) * reel.itemPrice).toLocaleString()}
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => handleDonate(reel)}
-                        className="group relative flex w-full items-center justify-center gap-4 overflow-hidden rounded-[32px] bg-primary py-8 text-xl font-black uppercase tracking-[0.2em] text-white shadow-glow transition-all hover:bg-white hover:text-secondary hover:-translate-y-1 active:scale-[0.98]"
-                      >
-                        <span className="relative z-10">Confirm Donation</span>
-                        <div className="absolute inset-0 z-0 bg-gradient-to-r from-primary via-accent to-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                        <ArrowRight size={24} className="relative z-10" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );

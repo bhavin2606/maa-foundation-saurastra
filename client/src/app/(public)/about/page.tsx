@@ -26,7 +26,7 @@ export default function AboutPage() {
           </span>
           <h1 className="text-6xl md:text-9xl font-black text-secondary tracking-tighter leading-[0.85] mb-12">
             The Heart Of <br/>
-            <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic">
+            <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic px-8">
               Maa Foundation
             </span>
           </h1>
@@ -86,7 +86,7 @@ export default function AboutPage() {
           <div className="text-center mb-24 space-y-6">
             <span className="text-primary font-black tracking-[0.4em] uppercase text-xs">What Drives Us</span>
             <h2 className="text-5xl md:text-7xl font-black text-secondary tracking-tighter leading-none">
-              Our Core <span className="italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Values</span>
+              Our Core <span className="italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent px-4">Values</span>
             </h2>
           </div>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
@@ -112,7 +112,7 @@ export default function AboutPage() {
           <div className="text-center mb-24 space-y-6">
             <span className="text-primary font-black tracking-[0.4em] uppercase text-xs">The Visionaries</span>
             <h2 className="text-5xl md:text-7xl font-black text-secondary tracking-tighter leading-none">
-              Meet The <span className="italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Team</span>
+              Meet The <span className="italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent px-4">Team</span>
             </h2>
           </div>
           <div className="grid gap-12 md:grid-cols-3">

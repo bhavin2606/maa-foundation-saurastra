@@ -55,7 +55,7 @@ export default function HomePage() {
               </span>
               <h1 className="text-6xl font-black leading-[0.9] text-secondary lg:text-8xl xl:text-9xl tracking-tighter">
                 Fuel Hope, <br/>
-                <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic">
+                <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic px-8">
                   Change Lives
                 </span>
               </h1>
@@ -142,7 +142,7 @@ export default function HomePage() {
               <span className="text-primary font-black tracking-[0.4em] uppercase text-xs">Our Initiatives</span>
               <h2 className="text-6xl md:text-8xl font-black text-secondary tracking-tighter leading-[0.85]">
                 Changing <br/>
-                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent italic">
+                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent italic px-6">
                   The World
                 </span>
               </h2>
@@ -218,7 +218,7 @@ export default function HomePage() {
           </div>
           <h2 className="text-6xl md:text-[10rem] font-black text-white tracking-tighter leading-[0.8] mb-12">
             Real Impact <br/>
-            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent italic bg-[length:200%_auto] animate-[gradient_4s_linear_infinite]">
+            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent italic bg-[length:200%_auto] animate-[gradient_4s_linear_infinite] px-10">
               In Motion
             </span>
           </h2>

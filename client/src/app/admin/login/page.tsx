@@ -56,7 +56,7 @@ export default function LoginPage() {
             <Heart size={40} fill="currentColor" />
           </div>
           <h1 className="text-4xl font-black text-secondary tracking-tighter leading-tight mb-3">
-            Admin <span className="text-primary italic">Portal</span>
+            Admin <span className="text-primary italic pr-2">Portal</span>
           </h1>
           <p className="text-muted font-medium tracking-tight">
             Authentication required for administrative access

@@ -48,4 +48,36 @@ export class EmailService {
       return null;
     }
   }
+
+  static async sendPaymentSuccessEmail(email: string, donationData: any) {
+    const fromAddress = process.env.SMTP_USER || "no-reply@maafoundation.org";
+    const mailOptions = {
+      from: `"Maa Foundation" <${fromAddress}>`,
+      to: email,
+      subject: "Donation Successful - Maa Foundation",
+      text: `Thank you for your donation of ₹${donationData.amount}. Your donation ID is ${donationData.id}.`,
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+          <h2 style="color: #4CAF50;">Thank You for Your Donation!</h2>
+          <p>Dear ${donationData.donorName},</p>
+          <p>We have successfully received your donation of <b>₹${donationData.amount}</b>.</p>
+          <p><b>Donation Details:</b></p>
+          <ul>
+            <li><b>Donation ID:</b> ${donationData.id}</li>
+            <li><b>Amount:</b> ₹${donationData.amount}</li>
+            <li><b>Date:</b> ${new Date().toLocaleDateString()}</li>
+          </ul>
+          <p>Your contribution helps us continue our mission. We truly appreciate your support!</p>
+          <p>Best regards,<br/>Maa Foundation Team</p>
+        </div>
+      `,
+    };
+
+    try {
+      return await this.transporter.sendMail(mailOptions);
+    } catch (error) {
+      console.error("Error sending payment success email:", error);
+      return null;
+    }
+  }
 }

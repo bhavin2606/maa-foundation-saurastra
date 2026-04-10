@@ -49,9 +49,14 @@ model Donation {
   donorEmail      String
   phone           String?
   message         String?
-  status          String   @default("PENDING")
-  paymentMethod   String?  // "GATEWAY" or "SCAN_AND_PAY"
+  paymentStatus   String   @default("pending")
+  paymentMethod   String?  // "razorpay" | "manual"
   screenshotUrl   String?
+  adminApproved   Boolean  @default(false)
+  adminApprovedAt DateTime?
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  razorpaySignature String?
   
   reelId          String?
   reel            Reel?    @relation(fields: [reelId], references: [id])

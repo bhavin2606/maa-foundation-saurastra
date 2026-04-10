@@ -35,14 +35,14 @@ export default function Navbar() {
       }`}
     >
       <div className="w-full max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-12">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-white shadow-glow transition-all duration-500 group-hover:rotate-12 group-hover:scale-110">
-            <Heart fill="currentColor" size={24} />
+        <Link href="/" className="flex items-center gap-2 group transition-all hover:opacity-90">
+          <div className="relative h-12 w-auto min-w-[150px] lg:h-14">
+            <img 
+              src="/logo.png" 
+              alt="Maa Foundation Saurastra" 
+              className="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-105"
+            />
           </div>
-          <span className="text-2xl font-black text-secondary tracking-tighter uppercase lg:text-3xl">
-            Maa<span className="text-primary italic">Foundation</span>
-          </span>
         </Link>
 
         {/* Desktop Nav */}

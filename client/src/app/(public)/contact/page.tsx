@@ -49,7 +49,7 @@ export default function ContactPage() {
           </span>
           <h1 className="text-6xl md:text-9xl font-black text-secondary tracking-tighter leading-[0.85] mb-12">
             Let's Start <br/>
-            <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic">
+            <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic px-6">
               A Dialogue
             </span>
           </h1>
