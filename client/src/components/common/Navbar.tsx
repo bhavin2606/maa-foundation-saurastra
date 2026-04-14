@@ -3,11 +3,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Heart, Menu, X, ChevronRight } from "lucide-react";
+import { Menu, X, ChevronRight } from "lucide-react";
 
 const navLinks = [
   { name: "Home", path: "/" },
   { name: "About", path: "/about" },
+  { name: "Work", path: "/work" },
   { name: "Campaigns", path: "/campaigns" },
   { name: "Reels", path: "/reels" },
   { name: "Contact", path: "/contact" },
@@ -35,13 +36,14 @@ export default function Navbar() {
       }`}
     >
       <div className="w-full max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-12">
-        <Link href="/" className="flex items-center gap-2 group transition-all hover:opacity-90">
-          <div className="relative h-12 w-auto min-w-[150px] lg:h-14">
-            <img 
-              src="/logo.png" 
-              alt="Maa Foundation Saurastra" 
-              className="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-105"
-            />
+        <Link href="/" className="flex items-center gap-3 group transition-all hover:opacity-90">
+          <div className="flex flex-col leading-none">
+            <span className="text-xl lg:text-2xl font-black tracking-tight text-secondary">
+              Maa <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent italic">Foundation</span>
+            </span>
+            <span className="mt-1 text-[9px] font-black uppercase tracking-[0.3em] text-secondary/50">
+              Seva • Shiksha • Sanskar
+            </span>
           </div>
         </Link>
 

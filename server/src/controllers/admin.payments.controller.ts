@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import { EmailService } from "../services/email.service.js";
+import { logger } from "../lib/logger.js";
 
 export class AdminPaymentsController {
   static async getManualPayments(req: Request, res: Response) {
@@ -14,6 +15,7 @@ export class AdminPaymentsController {
       });
       res.json(payments);
     } catch (error) {
+      logger.error("Failed to fetch manual payments", error);
       res.status(500).json({ error: "Failed to fetch manual payments" });
     }
   }
@@ -46,11 +48,19 @@ export class AdminPaymentsController {
       // Send success email
       await EmailService.sendPaymentSuccessEmail(donation.donorEmail, donation);
 
+      logger.info("Manual payment approved", {
+        donationId: donation.id,
+        campaignId: donation.campaignId,
+      });
+
       res.json({
         success: true,
         message: "Manual payment approved successfully"
       });
     } catch (error) {
+      logger.error("Failed to approve manual payment", error, {
+        donationId: req.params.id,
+      });
       res.status(500).json({ error: "Failed to approve manual payment" });
     }
   }
@@ -72,6 +82,9 @@ export class AdminPaymentsController {
         message: "Manual payment rejected"
       });
     } catch (error) {
+      logger.error("Failed to reject manual payment", error, {
+        donationId: req.params.id,
+      });
       res.status(500).json({ error: "Failed to reject manual payment" });
     }
   }

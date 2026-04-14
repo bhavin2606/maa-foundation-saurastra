@@ -73,12 +73,13 @@ export default function AdminLayout({
         {/* Logo */}
         <div className="flex items-center gap-2 border-b border-gray-100 px-6 py-4">
           <Link href="/admin" className="flex items-center gap-2 transition-all hover:opacity-90">
-            <div className="h-8 w-auto min-w-[100px]">
-              <img 
-                src="/logo.png" 
-                alt="Maa Foundation" 
-                className="h-full w-auto object-contain"
-              />
+            <div className="flex flex-col leading-none">
+              <span className="text-sm font-black tracking-tight text-secondary">
+                Maa <span className="text-primary italic">Foundation</span>
+              </span>
+              <span className="mt-1 text-[8px] font-black uppercase tracking-[0.25em] text-muted">
+                Admin Panel
+              </span>
             </div>
             <span className="text-xs font-black text-secondary uppercase tracking-[0.2em] border-l border-gray-200 pl-3">Admin</span>
           </Link>

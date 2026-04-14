@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { DonationsService } from "../services/donations.service.js";
+import { logger } from "../lib/logger.js";
+import { ImageStorageService } from "../services/image-storage.service.js";
 
 /**
  * @swagger
@@ -65,6 +67,7 @@ export class DonationsController {
       const donations = await DonationsService.getAll();
       res.json(donations);
     } catch (error) {
+      logger.error("Failed to fetch donations", error);
       res.status(500).json({ error: "Failed to fetch donations" });
     }
   }
@@ -100,6 +103,9 @@ export class DonationsController {
       }
       res.json(donation);
     } catch (error) {
+      logger.error("Failed to fetch donation", error, {
+        donationId: req.params.id,
+      });
       res.status(500).json({ error: "Failed to fetch donation" });
     }
   }
@@ -129,7 +135,10 @@ export class DonationsController {
       const donation = await DonationsService.create(req.body);
       res.json(donation);
     } catch (error) {
-      console.error("Error creating donation:", error);
+      logger.error("Failed to create donation", error, {
+        donorEmail: req.body?.donorEmail,
+        paymentMethod: req.body?.paymentMethod,
+      });
       res.status(500).json({ error: "Failed to process donation" });
     }
   }
@@ -160,6 +169,9 @@ export class DonationsController {
       await DonationsService.delete(req.params.id);
       res.json({ message: "Donation deleted successfully" });
     } catch (error) {
+      logger.error("Failed to delete donation", error, {
+        donationId: req.params.id,
+      });
       res.status(500).json({ error: "Failed to delete donation" });
     }
   }
@@ -206,7 +218,10 @@ export class DonationsController {
         ...order
       });
     } catch (error) {
-      console.error("Error creating Razorpay order:", error);
+      logger.error("Failed to create Razorpay order", error, {
+        donorEmail: req.body?.email,
+        amount: req.body?.amount,
+      });
       res.status(500).json({ error: "Failed to create payment order" });
     }
   }
@@ -238,7 +253,10 @@ export class DonationsController {
         donationId: donation.id
       });
     } catch (error) {
-      console.error("Payment verification failed:", error);
+      logger.error("Payment verification failed", error, {
+        donationId: req.body?.donationId,
+        razorpayOrderId: req.body?.razorpay_order_id,
+      });
       res.status(400).json({ 
         success: false,
         message: "Payment verification failed" 
@@ -261,15 +279,26 @@ export class DonationsController {
       const { name, email, amount, ...otherData } = req.body;
       const screenshot = req.file;
 
+      if (!name || !email || !amount) {
+        return res.status(400).json({ error: "Name, email, and amount are required" });
+      }
+
       if (!screenshot) {
         return res.status(400).json({ error: "Screenshot is required" });
       }
+
+      // Upload the payment proof before creating the donation so the record always points to a durable asset URL.
+      const uploadedScreenshot = await ImageStorageService.uploadDonationScreenshot({
+        file: screenshot,
+        donorEmail: email,
+        donorName: name,
+      });
 
       await DonationsService.createManualPayment({
         donorName: name,
         donorEmail: email,
         amount,
-        screenshotUrl: `/uploads/screenshots/${screenshot.filename}`,
+        screenshotUrl: uploadedScreenshot.url,
         ...otherData
       });
 
@@ -278,7 +307,10 @@ export class DonationsController {
         message: "Payment screenshot submitted. Waiting for admin approval."
       });
     } catch (error) {
-      console.error("Error submitting manual payment:", error);
+      logger.error("Failed to submit manual payment", error, {
+        donorEmail: req.body?.email,
+        amount: req.body?.amount,
+      });
       res.status(500).json({ error: "Failed to submit manual payment" });
     }
   }

@@ -1,6 +1,7 @@
 import { prisma } from "../lib/prisma.js";
 import { razorpay } from "../lib/razorpay.js";
 import crypto from "crypto";
+import { logger } from "../lib/logger.js";
 
 export class DonationsService {
   static async getAll() {
@@ -36,7 +37,7 @@ export class DonationsService {
       paymentStatus, razorpayOrderId, razorpayPaymentId, razorpaySignature 
     } = data;
     
-    return await prisma.donation.create({
+    const donation = await prisma.donation.create({
       data: {
         amount: parseFloat(amount),
         quantity: parseInt(quantity) || 1,
@@ -55,6 +56,16 @@ export class DonationsService {
         razorpaySignature,
       },
     });
+
+    logger.info("Donation created", {
+      donationId: donation.id,
+      paymentMethod: donation.paymentMethod,
+      paymentStatus: donation.paymentStatus,
+      campaignId: donation.campaignId,
+      reelId: donation.reelId,
+    });
+
+    return donation;
   }
 
   static async createRazorpayOrder(donationData: any) {
@@ -76,6 +87,12 @@ export class DonationsService {
         razorpayOrderId: order.id
       });
 
+      logger.info("Razorpay order created", {
+        orderId: order.id,
+        amount: order.amount,
+        donorEmail: donationData.donorEmail,
+      });
+
       return {
         orderId: order.id,
         amount: order.amount,
@@ -83,7 +100,10 @@ export class DonationsService {
         donationId: donation.id
       };
     } catch (error) {
-      console.error("Razorpay order creation failed:", error);
+      logger.error("Razorpay order creation failed", error, {
+        donorEmail: donationData.donorEmail,
+        amount,
+      });
       throw new Error("Failed to create Razorpay order");
     }
   }
@@ -130,16 +150,26 @@ export class DonationsService {
       const { EmailService } = await import("./email.service.js");
       await EmailService.sendPaymentSuccessEmail(donation.donorEmail, donation);
 
+      logger.info("Razorpay payment verified", {
+        donationId: donation.id,
+        campaignId: donation.campaignId,
+        razorpayPaymentId: razorpay_payment_id,
+      });
+
       return donation;
     } else {
+      logger.warn("Razorpay signature mismatch", {
+        donationId,
+        razorpayOrderId: razorpay_order_id,
+      });
       throw new Error("Invalid payment signature");
     }
   }
 
   static async createManualPayment(data: any) {
     const { amount, donorName, donorEmail, phone, message, screenshotUrl, reelId, campaignId } = data;
-    
-    return await prisma.donation.create({
+
+    const donation = await prisma.donation.create({
       data: {
         amount: parseFloat(amount),
         donorName,
@@ -153,5 +183,15 @@ export class DonationsService {
         campaignId,
       },
     });
+
+    logger.info("Manual donation submitted", {
+      donationId: donation.id,
+      donorEmail,
+      campaignId,
+      reelId,
+      hasScreenshotUrl: Boolean(screenshotUrl),
+    });
+
+    return donation;
   }
 }

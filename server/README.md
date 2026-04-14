@@ -63,7 +63,16 @@ Create a `.env` file with:
 ```
 DATABASE_URL="file:./dev.db"
 PORT=4000
+RAZORPAY_KEY_ID="your_razorpay_key"
+RAZORPAY_KEY_SECRET="your_razorpay_secret"
+CLOUDINARY_CLOUD_NAME="your_cloud_name"
+CLOUDINARY_API_KEY="your_cloudinary_api_key"
+CLOUDINARY_API_SECRET="your_cloudinary_api_secret"
+CLOUDINARY_FOLDER="maa-foundation"
+LOG_LEVEL="debug"
 ```
+
+Manual payment screenshots are now uploaded to Cloudinary instead of the local filesystem. The upload path is grouped under `CLOUDINARY_FOLDER/donations/<donor-key>/...` so each donor's proofs stay organized with a stable donor-based key.
 
 ## Moving to a Separate Repository
 

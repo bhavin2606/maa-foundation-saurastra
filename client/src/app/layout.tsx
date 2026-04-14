@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Maa Foundation — Support a Cause, Make a Difference",
+  title: "Maa Foundation — Seva • Shiksha • Sanskar",
   description:
-    "Maa Foundation is dedicated to empowering the underprivileged through donations, campaigns, and community-driven reels.",
+    "Maa Foundation does daily shwan seva, education support, mandir jiर्णोद्धार, dana-pani for birds, ayurvedic वृक्षारोपण, and sanatan katha—service with heart.",
 };
 
 export default function RootLayout({

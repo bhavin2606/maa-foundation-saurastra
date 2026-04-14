@@ -1,20 +1,108 @@
 import nodemailer from "nodemailer";
+import "../lib/env.js";
+import { logger } from "../lib/logger.js";
+
+type EmailPayload = {
+  to: string;
+  subject: string;
+  text: string;
+  html: string;
+};
 
 export class EmailService {
-  private static transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "smtp.ethereal.email",
-    port: parseInt(process.env.SMTP_PORT || "587"),
-    secure: process.env.SMTP_PORT === "465", // true for 465, false for other ports
-    auth: {
-      user: process.env.SMTP_USER || "placeholder",
-      pass: process.env.SMTP_PASS || "placeholder",
-    },
-  });
+  private static createTransporter() {
+    return nodemailer.createTransport({
+      host: process.env.SMTP_HOST || "smtp.ethereal.email",
+      port: parseInt(process.env.SMTP_PORT || "587"),
+      secure: process.env.SMTP_PORT === "465",
+      auth: {
+        user: process.env.SMTP_USER || "placeholder",
+        pass: process.env.SMTP_PASS || "placeholder",
+      },
+    });
+  }
+
+  private static resolveRecipient(email: string) {
+    const trimmedEmail = email.trim().toLowerCase();
+    const redirectEmail = process.env.EMAIL_REDIRECT_TO?.trim();
+    const blockMailinator = (process.env.EMAIL_BLOCK_MAILINATOR || "true").toLowerCase() !== "false";
+
+    if (redirectEmail) {
+      logger.info("Redirecting outgoing email", {
+        originalRecipient: trimmedEmail,
+        redirectedRecipient: redirectEmail,
+      });
+
+      return {
+        recipient: redirectEmail,
+        originalRecipient: trimmedEmail,
+        skipped: false,
+      };
+    }
+
+    if (blockMailinator && trimmedEmail.endsWith("@mailinator.com")) {
+      logger.warn("Skipping email delivery to unsupported Mailinator inbox", {
+        recipient: trimmedEmail,
+        reason: "Remote SMTP rejected the recipient address",
+      });
+
+      return {
+        recipient: trimmedEmail,
+        originalRecipient: trimmedEmail,
+        skipped: true,
+      };
+    }
+
+    return {
+      recipient: trimmedEmail,
+      originalRecipient: trimmedEmail,
+      skipped: false,
+    };
+  }
+
+  private static async sendEmail(payload: EmailPayload) {
+    const fromAddress = process.env.SMTP_USER || "no-reply@maafoundation.org";
+    const resolvedRecipient = this.resolveRecipient(payload.to);
+
+    if (resolvedRecipient.skipped) {
+      return {
+        skipped: true,
+        accepted: [],
+        rejected: [resolvedRecipient.originalRecipient],
+      };
+    }
+
+    try {
+      const transporter = this.createTransporter();
+      const result = await transporter.sendMail({
+        from: `"Maa Foundation" <${fromAddress}>`,
+        to: resolvedRecipient.recipient,
+        replyTo: resolvedRecipient.originalRecipient,
+        subject: payload.subject,
+        text: payload.text,
+        html: payload.html,
+      });
+
+      logger.info("Email sent", {
+        to: resolvedRecipient.recipient,
+        originalRecipient: resolvedRecipient.originalRecipient,
+        subject: payload.subject,
+        messageId: result.messageId,
+      });
+
+      return result;
+    } catch (error) {
+      logger.error("Email delivery failed", error, {
+        to: resolvedRecipient.recipient,
+        originalRecipient: resolvedRecipient.originalRecipient,
+        subject: payload.subject,
+      });
+      return null;
+    }
+  }
 
   static async sendOTP(email: string, otp: string) {
-    const fromAddress = process.env.SMTP_USER || "no-reply@maafoundation.org";
     const mailOptions = {
-      from: `"Maa Foundation" <${fromAddress}>`,
       to: email,
       subject: "Admin Login OTP - Maa Foundation",
       text: `Your OTP for admin login is: ${otp}. It will expire in 10 minutes.`,
@@ -22,19 +110,16 @@ export class EmailService {
     };
 
     try {
-      return await this.transporter.sendMail(mailOptions);
+      return await this.sendEmail(mailOptions);
     } catch (error) {
-      console.error("Error sending OTP email:", error);
-      // In development, we can log the OTP to the console if email fails
-      console.log(`[DEV] OTP for ${email}: ${otp}`);
+      logger.error("Error sending OTP email", error, { email });
+      logger.info("OTP fallback for development", { email, otp });
       return null;
     }
   }
 
   static async sendPasswordResetConfirmation(email: string) {
-    const fromAddress = process.env.SMTP_USER || "no-reply@maafoundation.org";
     const mailOptions = {
-      from: `"Maa Foundation" <${fromAddress}>`,
       to: email,
       subject: "Password Changed - Maa Foundation",
       text: `Your admin password has been successfully changed.`,
@@ -42,17 +127,15 @@ export class EmailService {
     };
 
     try {
-      return await this.transporter.sendMail(mailOptions);
+      return await this.sendEmail(mailOptions);
     } catch (error) {
-      console.error("Error sending password reset confirmation email:", error);
+      logger.error("Error sending password reset confirmation email", error, { email });
       return null;
     }
   }
 
   static async sendPaymentSuccessEmail(email: string, donationData: any) {
-    const fromAddress = process.env.SMTP_USER || "no-reply@maafoundation.org";
     const mailOptions = {
-      from: `"Maa Foundation" <${fromAddress}>`,
       to: email,
       subject: "Donation Successful - Maa Foundation",
       text: `Thank you for your donation of ₹${donationData.amount}. Your donation ID is ${donationData.id}.`,
@@ -74,9 +157,12 @@ export class EmailService {
     };
 
     try {
-      return await this.transporter.sendMail(mailOptions);
+      return await this.sendEmail(mailOptions);
     } catch (error) {
-      console.error("Error sending payment success email:", error);
+      logger.error("Error sending payment success email", error, {
+        email,
+        donationId: donationData?.id,
+      });
       return null;
     }
   }

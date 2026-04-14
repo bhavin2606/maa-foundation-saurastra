@@ -1,3 +1,4 @@
+import "./lib/env.js";
 import express from "express";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
@@ -10,11 +11,7 @@ import { dashboardRouter } from "./routes/dashboard.js";
 import { authRouter } from "./routes/auth.js";
 import { adminRouter } from "./routes/admin.js";
 import { authMiddleware } from "./middleware/auth.middleware.js";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { logger } from "./lib/logger.js";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -59,9 +56,6 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Serve static files from uploads folder
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
-
 app.use("/api/campaigns", campaignsRouter);
 app.use("/api/donations", donationsRouter);
 app.use("/api/payment", donationsRouter);
@@ -76,5 +70,8 @@ app.get("/api/health", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  logger.info("Server started", {
+    port: PORT,
+    docsUrl: `http://localhost:${PORT}/api-docs`,
+  });
 });

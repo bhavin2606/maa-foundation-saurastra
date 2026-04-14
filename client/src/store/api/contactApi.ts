@@ -6,6 +6,7 @@ export interface ContactQuery {
   email: string;
   subject: string;
   message: string;
+  status?: string;
   createdAt: string;
 }
 

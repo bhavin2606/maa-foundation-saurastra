@@ -7,6 +7,18 @@ import {
 } from "@/store/api/adminPaymentsApi";
 import { Search, Filter, Check, X, Eye } from "lucide-react";
 
+function resolveScreenshotUrl(screenshotUrl?: string) {
+  if (!screenshotUrl) {
+    return null;
+  }
+
+  if (/^https?:\/\//i.test(screenshotUrl)) {
+    return screenshotUrl;
+  }
+
+  return `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}${screenshotUrl}`;
+}
+
 export default function AdminDonationsPage() {
   const { data: donations = [], isLoading } = useGetDonationsQuery();
   const [approvePayment] = useApproveManualPaymentMutation();
@@ -94,9 +106,9 @@ export default function AdminDonationsPage() {
                     <span className={`text-xs font-bold uppercase tracking-wider ${d.paymentMethod === 'manual' ? 'text-amber-600' : 'text-blue-600'}`}>
                       {d.paymentMethod === 'manual' ? 'Manual Transfer' : 'Razorpay'}
                     </span>
-                    {d.screenshotUrl && (
+                    {resolveScreenshotUrl(d.screenshotUrl) && (
                       <a 
-                        href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}${d.screenshotUrl}`} 
+                        href={resolveScreenshotUrl(d.screenshotUrl) || undefined}
                         target="_blank" 
                         rel="noopener noreferrer" 
                         className="inline-flex items-center gap-1 text-[10px] font-black text-primary hover:underline uppercase"
