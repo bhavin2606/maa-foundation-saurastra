@@ -15,9 +15,9 @@ export default function WorkPage() {
             <span className="inline-flex items-center gap-2 rounded-full glass-morphism px-6 py-2.5 text-xs font-black text-primary uppercase tracking-[0.3em]">
               Seva • Shiksha • Sanskar • Paryavaran
             </span>
-            <h1 className="mt-8 text-6xl md:text-8xl font-black text-secondary tracking-tighter leading-[0.85]">
+            <h1 className="mt-8 text-5xl sm:text-7xl md:text-8xl font-black text-secondary tracking-tighter leading-[0.85]">
               Our Work, <br />
-              <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic px-6">
+              <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic px-2 py-1 box-decoration-clone inline-block">
                 Real & Regular
               </span>
             </h1>
@@ -52,7 +52,7 @@ export default function WorkPage() {
             <div className="space-y-3">
               <span className="text-primary font-black tracking-[0.4em] uppercase text-xs">What We Do</span>
               <h2 className="text-4xl md:text-6xl font-black text-secondary tracking-tighter">
-                सेवा के <span className="italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent px-2">मुख्य</span> कार्य
+                सेवा के <span className="italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent px-2 py-1 box-decoration-clone inline-block">मुख्य</span> कार्य
               </h2>
             </div>
             <p className="max-w-xl text-muted font-medium leading-relaxed text-base md:text-lg">
@@ -100,9 +100,9 @@ export default function WorkPage() {
                       Initiative
                     </span>
                   </div>
-                  <h3 className="mt-6 text-4xl md:text-5xl font-black text-secondary tracking-tighter leading-tight">
+                  <h3 className="mt-6 text-4xl font-black text-secondary tracking-tighter leading-tight">
                     {item.title} <span className="text-muted">/</span>{" "}
-                    <span className="italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    <span className="italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent box-decoration-clone inline-block">
                       {item.subtitle}
                     </span>
                   </h3>

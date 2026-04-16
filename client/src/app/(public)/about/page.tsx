@@ -9,9 +9,7 @@ const values = [
 ];
 
 const team = [
-  { name: "Priya Sharma", role: "Founder & CEO", image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=300&h=300&fit=crop" },
-  { name: "Rahul Verma", role: "Operations Head", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop" },
-  { name: "Anita Desai", role: "Community Lead", image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop" },
+  { name: "Swargwashi Dineshbhai Chauhan", role: "Founder of Maa Foundation & Sanatan Group", image: "/images/founder.jpeg" },
 ];
 
 export default function AboutPage() {
@@ -24,16 +22,14 @@ export default function AboutPage() {
           <span className="inline-flex items-center gap-2 rounded-full glass-morphism px-6 py-2.5 text-xs font-black text-primary uppercase tracking-[0.3em] mb-8">
             Our Journey
           </span>
-          <h1 className="text-6xl md:text-9xl font-black text-secondary tracking-tighter leading-[0.85] mb-12">
-            The Heart Of <br/>
-            <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic px-8">
+          <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black text-secondary tracking-tighter leading-[0.85] mb-12">
+            The Vision Of <br />
+            <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic px-2 py-1 box-decoration-clone inline-block">
               Maa Foundation
             </span>
           </h1>
           <p className="max-w-3xl mx-auto text-xl md:text-2xl text-muted font-medium leading-relaxed">
-            Since 2015, we've been on a mission to transform compassion into 
-            action, bridging the gap between privilege and need through 
-            sustainable community-driven initiatives.
+            माँ फाउंडेशन की स्थापना 14 मार्च 2020 को स्वर्गवासी दिनेशभाई चौहान द्वारा की गई थी। हमारा मुख्य उद्देश्य सनातन धर्म के कार्यों को बढ़ावा देना और समाज में निस्वार्थ सेवा भावना को जागृत करना है। (Founded by Swargwashi Dineshbhai Chauhan on March 14, 2020, Maa Foundation is dedicated to the service of Sanatan Dharma and various social welfare activities.)
           </p>
         </div>
       </section>
@@ -55,20 +51,16 @@ export default function AboutPage() {
             <div className="space-y-10">
               <div className="space-y-4">
                 <span className="text-primary font-black tracking-[0.4em] uppercase text-xs">Our Mission</span>
-                <h2 className="text-5xl md:text-6xl font-black text-secondary tracking-tighter leading-none">
-                  Empowering <br/>
-                  <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Every Life</span>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-secondary tracking-tighter leading-none">
+                  Empowering <br />
+                  <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent px-2 py-1 box-decoration-clone inline-block">Every Life</span>
                 </h2>
               </div>
               <p className="text-lg text-muted font-medium leading-relaxed">
-                To create a world where basic necessities — food, clean water,
-                education, and healthcare — are accessible to all, regardless of their
-                background. We aim to inspire a global movement of empathy and transparent giving.
+                माँ फाउंडेशन सम्पूर्ण सनातन धर्म के उत्सवों को मनाकर समाज में समरसता और एकता स्थापित करने का मुख्य लक्ष्य रखता है। हम प्राकृतिक आपदाओं में सहायता, मंदिर जीर्णोद्धार, शिक्षा, और पशु आहार जैसी सेवाओं के माध्यम से समाज को सशक्त बनाने के लिए तत्पर हैं।
               </p>
               <p className="text-lg text-muted font-medium leading-relaxed">
-                Through our digital-first approach with impact reels and real-time 
-                tracking, we ensure that every contribution creates a measurable 
-                and lasting ripple effect in the lives of the underprivileged.
+                माँ फाउंडेशन में प्राप्त होने वाला हर एक दान सीधे धर्म कार्यों और निस्वार्थ सेवा गतिविधियों में इस्तेमाल किया जाता है। हमारी पारदर्शिता हमारी सबसे बड़ी ताकत है।
               </p>
               <div className="pt-6">
                 <Link href="/campaigns" className="inline-flex items-center gap-4 group text-lg font-black text-secondary uppercase tracking-widest transition-all hover:text-primary">
@@ -86,7 +78,7 @@ export default function AboutPage() {
           <div className="text-center mb-24 space-y-6">
             <span className="text-primary font-black tracking-[0.4em] uppercase text-xs">What Drives Us</span>
             <h2 className="text-5xl md:text-7xl font-black text-secondary tracking-tighter leading-none">
-              Our Core <span className="italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent px-4">Values</span>
+              Our Core <span className="italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent px-2 py-1 box-decoration-clone">Values</span>
             </h2>
           </div>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
@@ -112,7 +104,7 @@ export default function AboutPage() {
           <div className="text-center mb-24 space-y-6">
             <span className="text-primary font-black tracking-[0.4em] uppercase text-xs">The Visionaries</span>
             <h2 className="text-5xl md:text-7xl font-black text-secondary tracking-tighter leading-none">
-              Meet The <span className="italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent px-4">Team</span>
+              Meet The <span className="italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent px-2 py-1 box-decoration-clone">Team</span>
             </h2>
           </div>
           <div className="grid gap-12 md:grid-cols-3">

@@ -52,9 +52,9 @@ export default function Footer() {
             </h4>
             <div className="flex flex-col gap-6 text-sm">
               {[
-                { icon: <Mail size={18} />, value: "contact@maafoundation.org" },
-                { icon: <Phone size={18} />, value: "+91 98765 43210" },
-                { icon: <MapPin size={18} />, value: "Mumbai, Maharashtra, India" },
+                { icon: <Mail size={18} />, value: "maafondations75@gmail.com" },
+                { icon: <Phone size={18} />, value: "+91 9925685995" },
+                { icon: <MapPin size={18} />, value: "Bagasara, Gujarat, India" },
               ].map((item, i) => (
                 <span key={i} className="flex items-center gap-4 text-slate-300 font-medium hover:text-white transition-colors cursor-default">
                   <span className="text-primary">{item.icon}</span> {item.value}

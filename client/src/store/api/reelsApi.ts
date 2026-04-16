@@ -48,6 +48,13 @@ export const reelsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Reels"],
     }),
+    incrementReelView: builder.mutation<Reel, string>({
+      query: (id) => ({
+        url: `/reels/${id}/view`,
+        method: "PATCH",
+      }),
+      invalidatesTags: (result, error, id) => [{ type: "Reels", id }],
+    }),
   }),
 });
 
@@ -57,4 +64,5 @@ export const {
   useCreateReelMutation,
   useUpdateReelMutation,
   useDeleteReelMutation,
+  useIncrementReelViewMutation,
 } = reelsApi;

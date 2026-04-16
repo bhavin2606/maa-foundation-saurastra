@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
+
 import { useGetDonationsQuery } from "@/store/api/donationsApi";
 import { 
   useApproveManualPaymentMutation, 
   useRejectManualPaymentMutation 
 } from "@/store/api/adminPaymentsApi";
-import { Search, Filter, Check, X, Eye } from "lucide-react";
+import { Search, Filter, Check, X, Eye, Download } from "lucide-react";
 
 function resolveScreenshotUrl(screenshotUrl?: string) {
   if (!screenshotUrl) {
@@ -23,6 +25,7 @@ export default function AdminDonationsPage() {
   const { data: donations = [], isLoading } = useGetDonationsQuery();
   const [approvePayment] = useApproveManualPaymentMutation();
   const [rejectPayment] = useRejectManualPaymentMutation();
+  const [selectedReceipt, setSelectedReceipt] = useState<string | null>(null);
 
   const handleApprove = async (id: string) => {
     if (confirm("Are you sure you want to approve this payment?")) {
@@ -130,6 +133,15 @@ export default function AdminDonationsPage() {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex justify-center gap-2">
+                    {d.receiptUrl && (
+                      <button
+                        onClick={() => setSelectedReceipt(d.receiptUrl)}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+                        title="View Receipt"
+                      >
+                        <Download size={16} />
+                      </button>
+                    )}
                     {d.paymentMethod === "manual" && d.paymentStatus === "waiting_for_admin" && (
                       <>
                         <button
@@ -160,6 +172,41 @@ export default function AdminDonationsPage() {
           </div>
         )}
       </div>
+
+      {/* PDF Modal */}
+      {selectedReceipt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="relative w-full max-w-4xl rounded-2xl bg-white shadow-xl flex flex-col h-[85vh] overflow-hidden">
+            <div className="flex items-center justify-between border-b px-6 py-4 bg-gray-50">
+              <h3 className="text-lg font-bold text-gray-900">Receipt Viewer</h3>
+              <div className="flex gap-2">
+                <a 
+                  href={selectedReceipt} 
+                  download
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition-colors"
+                >
+                  <Download size={16} /> Download PDF
+                </a>
+                <button
+                  onClick={() => setSelectedReceipt(null)}
+                  className="rounded-lg p-2 text-gray-400 hover:bg-gray-200 hover:text-gray-700 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 bg-gray-100 p-0 m-0 overflow-hidden">
+              <iframe 
+                src={selectedReceipt} 
+                className="w-full h-full border-0 bg-white" 
+                title="PDF Viewer"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

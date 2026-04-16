@@ -203,4 +203,32 @@ export class ReelsController {
       res.status(500).json({ error: "Failed to delete reel" });
     }
   }
+
+  /**
+   * @swagger
+   * /api/reels/{id}/view:
+   *   patch:
+   *     summary: Increment the reel view count by id
+   *     tags: [Reels]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: The reel id
+   *     responses:
+   *       200:
+   *         description: The reel view count was incremented
+   *       404:
+   *         description: The reel was not found
+   */
+  static async incrementView(req: Request, res: Response) {
+    try {
+      const reel = await ReelsService.incrementView(req.params.id);
+      res.json(reel);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to increment view count" });
+    }
+  }
 }

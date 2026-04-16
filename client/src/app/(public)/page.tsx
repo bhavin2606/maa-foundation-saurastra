@@ -35,9 +35,9 @@ export default function HomePage() {
                 </span>
                 Seva • Shiksha • Sanskar
               </span>
-              <h1 className="text-6xl font-black leading-[0.9] text-secondary lg:text-8xl xl:text-9xl tracking-tighter">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black leading-[0.9] text-secondary tracking-tighter">
                 Seva ka sankalp, <br />
-                <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic px-8">
+                <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic px-2 py-1 box-decoration-clone inline-block">
                   life me badlav
                 </span>
               </h1>
@@ -122,9 +122,9 @@ export default function HomePage() {
           <div className="mb-24 flex flex-col md:flex-row md:items-end justify-between gap-12">
             <div className="space-y-6">
               <span className="text-primary font-black tracking-[0.4em] uppercase text-xs">Our Work / हमारे कार्य</span>
-              <h2 className="text-6xl md:text-8xl font-black text-secondary tracking-tighter leading-[0.85]">
+              <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-secondary tracking-tighter leading-[0.85]">
                 Seva के <br />
-                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent italic px-6">
+                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent italic px-2 py-1 box-decoration-clone">
                   ways
                 </span>
               </h2>
@@ -186,9 +186,9 @@ export default function HomePage() {
           <div className="inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-white/5 border border-white/10 text-primary mb-12 animate-float">
             <Target size={40} />
           </div>
-          <h2 className="text-6xl md:text-[10rem] font-black text-white tracking-tighter leading-[0.8] mb-12">
+          <h2 className="text-5xl sm:text-7xl md:text-8xl font-black text-white tracking-tighter leading-[0.8] mb-12">
             Real Impact <br />
-            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent italic bg-[length:200%_auto] animate-[gradient_4s_linear_infinite] px-10">
+            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent italic bg-[length:200%_auto] animate-[gradient_4s_linear_infinite] px-2 py-1 box-decoration-clone">
               In Motion
             </span>
           </h2>

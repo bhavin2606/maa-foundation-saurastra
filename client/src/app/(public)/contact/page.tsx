@@ -47,9 +47,9 @@ export default function ContactPage() {
           <span className="inline-flex items-center gap-2 rounded-full glass-morphism px-6 py-2.5 text-xs font-black text-primary uppercase tracking-[0.3em] mb-8">
             Get In Touch
           </span>
-          <h1 className="text-6xl md:text-9xl font-black text-secondary tracking-tighter leading-[0.85] mb-12">
+          <h1 className="text-5xl sm:text-7xl lg:text-9xl font-black text-secondary tracking-tighter leading-[0.85] mb-12">
             Let's Start <br/>
-            <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic px-6">
+            <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic px-2 py-1 box-decoration-clone inline-block">
               A Dialogue
             </span>
           </h1>
@@ -66,9 +66,9 @@ export default function ContactPage() {
             {/* Contact Info Cards */}
             <div className="lg:col-span-1 space-y-8">
               {[
-                { icon: <Mail size={32} />, label: "Email Us", val: "info@maafoundation.com", sub: "Support & Inquiries" },
-                { icon: <Phone size={32} />, label: "Call Us", val: "+91 98765 43210", sub: "Mon - Sat, 9am - 6pm" },
-                { icon: <MapPin size={32} />, label: "Visit Us", val: "Rajkot, Gujarat", sub: "Maa Foundation HQ" },
+                { icon: <Mail size={32} />, label: "Email Us", val: "maafondations75@gmail.com", sub: "Support & Inquiries" },
+                { icon: <Phone size={32} />, label: "Call Us", val: "+91 9925685995", sub: "Available Daily" },
+                { icon: <MapPin size={32} />, label: "Visit Us", val: "Bagasara, Gujarat", sub: "Maa Foundation HQ" },
               ].map((item, i) => (
                 <div key={i} className="group p-10 rounded-[48px] glass-card border-slate-100 transition-all duration-500 hover:-translate-y-3 hover:shadow-premium">
                   <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary text-white shadow-xl transition-all duration-500 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent group-hover:rotate-12 group-hover:shadow-glow">

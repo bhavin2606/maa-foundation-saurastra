@@ -37,4 +37,15 @@ export class ReelsService {
       where: { id },
     });
   }
+
+  static async incrementView(id: string) {
+    return await prisma.reel.update({
+      where: { id },
+      data: {
+        views: {
+          increment: 1,
+        },
+      },
+    });
+  }
 }

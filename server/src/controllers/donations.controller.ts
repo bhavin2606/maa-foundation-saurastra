@@ -250,7 +250,8 @@ export class DonationsController {
         success: true,
         message: "Payment successful",
         paymentId: req.body.razorpay_payment_id,
-        donationId: donation.id
+        donationId: donation.id,
+        receiptUrl: donation.receiptUrl
       });
     } catch (error) {
       logger.error("Payment verification failed", error, {
@@ -314,4 +315,5 @@ export class DonationsController {
       res.status(500).json({ error: "Failed to submit manual payment" });
     }
   }
+
 }

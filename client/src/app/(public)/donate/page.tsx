@@ -1,10 +1,10 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { 
-  useCreateManualPaymentMutation, 
-  useCreateRazorpayOrderMutation, 
-  useVerifyRazorpayPaymentMutation 
+import {
+  useCreateManualPaymentMutation,
+  useCreateRazorpayOrderMutation,
+  useVerifyRazorpayPaymentMutation
 } from "@/store/api/donationsApi";
 import { useGetCampaignByIdQuery } from "@/store/api/campaignsApi";
 import { useGetReelByIdQuery } from "@/store/api/reelsApi";
@@ -34,6 +34,7 @@ function DonateContent() {
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
 
   const { data: campaign } = useGetCampaignByIdQuery(campaignId || "", { skip: !campaignId });
   const { data: reel } = useGetReelByIdQuery(reelId || "", { skip: !reelId });
@@ -41,18 +42,18 @@ function DonateContent() {
   const [createManualPayment] = useCreateManualPaymentMutation();
   const [createRazorpayOrder] = useCreateRazorpayOrderMutation();
   const [verifyRazorpayPayment] = useVerifyRazorpayPaymentMutation();
-  
+
   const {
     register,
     handleSubmit,
     setValue,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<DonateFormData>({ 
-    defaultValues: { 
+  } = useForm<DonateFormData>({
+    defaultValues: {
       amount: 1000,
       paymentMethod: "razorpay"
-    } 
+    }
   });
 
   const selectedAmount = watch("amount");
@@ -112,12 +113,12 @@ function DonateContent() {
         window.scrollTo(0, 0);
       } else {
         // Razorpay flow
-        const order = await createRazorpayOrder({ 
+        const order = await createRazorpayOrder({
           amount: data.amount,
           name: data.name,
-          email: data.email 
+          email: data.email
         }).unwrap();
-        
+
         const options = {
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_SaEBC54CQIXUNj",
           amount: order.amount,
@@ -127,10 +128,11 @@ function DonateContent() {
           order_id: order.orderId,
           handler: async (response: any) => {
             try {
-              await verifyRazorpayPayment({
+              const res = await verifyRazorpayPayment({
                 ...response,
                 donationId: order.donationId
               }).unwrap();
+              if (res.receiptUrl) setReceiptUrl(res.receiptUrl);
               setIsSuccess(true);
               window.scrollTo(0, 0);
             } catch (err) {
@@ -159,24 +161,37 @@ function DonateContent() {
 
   if (isSuccess) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
+      <div className="flex min-h-[60vh] flex-col items-center justify-center py-20 text-center px-6">
         <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 text-emerald-500">
           <CheckCircle2 size={40} />
         </div>
         <h2 className="text-3xl font-bold text-secondary">
           {paymentMethod === "manual" ? "Screenshot Submitted!" : "Thank you! Your payment was successful."}
         </h2>
-        <p className="mt-4 max-w-md text-muted">
-          {paymentMethod === "manual" 
-            ? "Your payment screenshot has been submitted. Once admin verifies it, you will receive a confirmation email." 
+        <p className="mt-4 max-w-md text-muted overflow-hidden">
+          {paymentMethod === "manual"
+            ? "Your payment screenshot has been submitted. Once admin verifies it, you will receive a confirmation email."
             : "Your support makes a real difference in our mission."}
         </p>
-        <button
-          onClick={() => router.push("/")}
-          className="mt-8 rounded-full bg-secondary px-8 py-3 font-semibold text-white transition-all hover:bg-secondary/90"
-        >
-          Back to Home
-        </button>
+
+        <div className="flex flex-col sm:flex-row gap-4 mt-10">
+          {receiptUrl && (
+            <a
+              href={receiptUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-8 py-3 rounded-full bg-primary text-white font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 shadow-lg shadow-primary/25 hover:-translate-y-1 transition-all"
+            >
+              Download Receipt
+            </a>
+          )}
+          <button
+            onClick={() => router.push("/")}
+            className="rounded-full bg-secondary px-8 py-3 font-semibold text-white transition-all hover:bg-secondary/90 shadow-lg"
+          >
+            Back to Home
+          </button>
+        </div>
       </div>
     );
   }
@@ -192,16 +207,16 @@ function DonateContent() {
           {/* Header */}
           <div>
             <h2 className="text-2xl font-black text-secondary tracking-tight uppercase">Complete Your Donation</h2>
-            <p className="text-sm text-muted">Please fill in your details to support our cause.</p>
+            <p className="text-sm text-muted">माँ फाउंडेशन में प्राप्त होने वाला दान धर्म कार्यों और सेवा गतिविधियों में इस्तेमाल किया जाता है। (Donations received by Maa Foundation are utilized for religious works and social service activities.)</p>
           </div>
 
           {/* Selection Summary */}
           {(campaign || reel) && (
             <div className="rounded-2xl bg-primary/5 p-4 flex items-center gap-4">
               <div className="h-16 w-16 overflow-hidden rounded-xl bg-gray-100 shadow-sm shrink-0">
-                <img 
-                  src={campaign?.image || reel?.posterUrl} 
-                  className="h-full w-full object-cover" 
+                <img
+                  src={campaign?.image || reel?.posterUrl}
+                  className="h-full w-full object-cover"
                   alt="Selection"
                 />
               </div>
@@ -225,11 +240,10 @@ function DonateContent() {
                   key={amt}
                   type="button"
                   onClick={() => setValue("amount", amt)}
-                  className={`rounded-xl py-3 text-sm font-bold transition-all ${
-                    selectedAmount === amt
-                      ? "bg-primary text-white shadow-lg shadow-primary/25"
-                      : "bg-surface text-secondary hover:bg-primary/10"
-                  }`}
+                  className={`rounded-xl py-3 text-sm font-bold transition-all ${selectedAmount === amt
+                    ? "bg-primary text-white shadow-lg shadow-primary/25"
+                    : "bg-surface text-secondary hover:bg-primary/10"
+                    }`}
                 >
                   ₹{amt.toLocaleString()}
                 </button>
@@ -256,11 +270,10 @@ function DonateContent() {
                   setPaymentMethod("razorpay");
                   setValue("paymentMethod", "razorpay");
                 }}
-                className={`flex items-center gap-4 rounded-2xl border-2 p-4 transition-all ${
-                  paymentMethod === "razorpay"
-                    ? "border-primary bg-primary/5"
-                    : "border-gray-50 bg-surface hover:border-gray-200"
-                }`}
+                className={`flex items-center gap-4 rounded-2xl border-2 p-4 transition-all ${paymentMethod === "razorpay"
+                  ? "border-primary bg-primary/5"
+                  : "border-gray-50 bg-surface hover:border-gray-200"
+                  }`}
               >
                 <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${paymentMethod === "razorpay" ? "bg-primary text-white" : "bg-gray-200 text-muted"}`}>
                   <CreditCard size={20} />
@@ -277,11 +290,10 @@ function DonateContent() {
                   setPaymentMethod("manual");
                   setValue("paymentMethod", "manual");
                 }}
-                className={`flex items-center gap-4 rounded-2xl border-2 p-4 transition-all ${
-                  paymentMethod === "manual"
-                    ? "border-primary bg-primary/5"
-                    : "border-gray-50 bg-surface hover:border-gray-200"
-                }`}
+                className={`flex items-center gap-4 rounded-2xl border-2 p-4 transition-all ${paymentMethod === "manual"
+                  ? "border-primary bg-primary/5"
+                  : "border-gray-50 bg-surface hover:border-gray-200"
+                  }`}
               >
                 <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${paymentMethod === "manual" ? "bg-primary text-white" : "bg-gray-200 text-muted"}`}>
                   <QrCode size={20} />
@@ -300,10 +312,10 @@ function DonateContent() {
               <div className="flex flex-col items-center text-center">
                 <div className="mb-4 bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
                   {/* Mock UPI QR Code */}
-                  <img 
-                    src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=maa-foundation@upi&pn=Maa%20Foundation&am=0" 
-                    alt="UPI QR Code" 
-                    className="h-40 w-40"
+                  <img
+                    src="/images/doanation-qr.jpeg"
+                    alt="Maa Foundation UPI QR Code"
+                    className="h-40 w-40 object-contain"
                   />
                 </div>
                 <p className="text-xs font-bold text-muted uppercase tracking-widest">Scan this QR to pay</p>
@@ -340,48 +352,48 @@ function DonateContent() {
 
           {/* User Details */}
           <div className="space-y-6">
-             <label className="text-sm font-black text-secondary uppercase tracking-widest">Donor Information</label>
-             <div className="grid gap-6 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <p className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">Full Name</p>
-                  <input
-                    {...register("name", { required: "Name is required" })}
-                    className="w-full rounded-xl border border-gray-100 bg-surface px-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-primary/20"
-                    placeholder="Enter your name"
-                  />
-                  {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>}
-                </div>
-                <div className="space-y-1.5">
-                  <p className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">Email Address</p>
-                  <input
-                    type="email"
-                    {...register("email", { required: "Email is required" })}
-                    className="w-full rounded-xl border border-gray-100 bg-surface px-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-primary/20"
-                    placeholder="your@email.com"
-                  />
-                  {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
-                </div>
-             </div>
-             <div className="grid gap-6 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <p className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">Phone Number</p>
-                  <input
-                    type="tel"
-                    {...register("phone", { required: "Phone is required" })}
-                    className="w-full rounded-xl border border-gray-100 bg-surface px-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-primary/20"
-                    placeholder="98765 43210"
-                  />
-                  {errors.phone && <p className="mt-1 text-xs text-red-500">{errors.phone.message}</p>}
-                </div>
-                <div className="space-y-1.5">
-                  <p className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">Note (Optional)</p>
-                  <input
-                    {...register("message")}
-                    className="w-full rounded-xl border border-gray-100 bg-surface px-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-primary/20"
-                    placeholder="Wishes or instructions"
-                  />
-                </div>
-             </div>
+            <label className="text-sm font-black text-secondary uppercase tracking-widest">Donor Information</label>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <p className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">Full Name</p>
+                <input
+                  {...register("name", { required: "Name is required" })}
+                  className="w-full rounded-xl border border-gray-100 bg-surface px-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                  placeholder="Enter your name"
+                />
+                {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>}
+              </div>
+              <div className="space-y-1.5">
+                <p className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">Email Address</p>
+                <input
+                  type="email"
+                  {...register("email", { required: "Email is required" })}
+                  className="w-full rounded-xl border border-gray-100 bg-surface px-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                  placeholder="your@email.com"
+                />
+                {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
+              </div>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <p className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">Phone Number</p>
+                <input
+                  type="tel"
+                  {...register("phone", { required: "Phone is required" })}
+                  className="w-full rounded-xl border border-gray-100 bg-surface px-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                  placeholder="98765 43210"
+                />
+                {errors.phone && <p className="mt-1 text-xs text-red-500">{errors.phone.message}</p>}
+              </div>
+              <div className="space-y-1.5">
+                <p className="text-[10px] font-black text-muted uppercase tracking-widest ml-1">Note (Optional)</p>
+                <input
+                  {...register("message")}
+                  className="w-full rounded-xl border border-gray-100 bg-surface px-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                  placeholder="Wishes or instructions"
+                />
+              </div>
+            </div>
           </div>
 
           <button
@@ -400,48 +412,48 @@ function DonateContent() {
         {/* Sidebar Info */}
         <div className="space-y-6 lg:col-span-2">
           <div className="rounded-3xl bg-secondary p-8 text-white shadow-xl">
-             <h3 className="text-xl font-black uppercase tracking-tighter">Impact Summary</h3>
-             <p className="mt-2 text-sm text-gray-400">Your ₹{selectedAmount?.toLocaleString()} donation will provide:</p>
-             
-             <div className="mt-8 space-y-6">
-                {[
-                  { value: Math.floor(selectedAmount / 100), label: "Days of Clean Water", icon: "💧" },
-                  { value: Math.floor(selectedAmount / 500), label: "Nutritious Meal Kits", icon: "🍱" },
-                  { value: Math.floor(selectedAmount / 2500), label: "Education Toolkits", icon: "📚" },
-                ].filter(item => item.value > 0).map((item, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-2xl">
-                      {item.icon}
-                    </div>
-                    <div>
-                      <p className="text-2xl font-black leading-none">{item.value}</p>
-                      <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-gray-500">{item.label}</p>
-                    </div>
+            <h3 className="text-xl font-black uppercase tracking-tighter">Impact Summary</h3>
+            <p className="mt-2 text-sm text-gray-400">Your ₹{selectedAmount?.toLocaleString()} donation will provide:</p>
+
+            <div className="mt-8 space-y-6">
+              {[
+                { value: Math.floor(selectedAmount / 100), label: "Days of Clean Water", icon: "💧" },
+                { value: Math.floor(selectedAmount / 500), label: "Nutritious Meal Kits", icon: "🍱" },
+                { value: Math.floor(selectedAmount / 2500), label: "Education Toolkits", icon: "📚" },
+              ].filter(item => item.value > 0).map((item, i) => (
+                <div key={i} className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-2xl">
+                    {item.icon}
                   </div>
-                ))}
-             </div>
+                  <div>
+                    <p className="text-2xl font-black leading-none">{item.value}</p>
+                    <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-gray-500">{item.label}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="rounded-3xl bg-surface p-8 shadow-sm">
-             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <Heart size={24} />
-             </div>
-             <h3 className="text-lg font-black text-secondary uppercase tracking-tighter">80G Certificate</h3>
-             <p className="mt-2 text-sm text-muted text-gray-500">
-               All donations are eligible for tax exemption under IT Section 80G. Certificate will be sent to your email.
-             </p>
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <Heart size={24} />
+            </div>
+            <h3 className="text-lg font-black text-secondary uppercase tracking-tighter">80G Certificate</h3>
+            <p className="mt-2 text-sm text-muted text-gray-500">
+              All donations are eligible for tax exemption under IT Section 80G. Certificate will be sent to your email.
+            </p>
           </div>
-          
+
           <div className="rounded-3xl bg-emerald-500 p-8 text-white shadow-lg">
-             <div className="flex items-start gap-4">
-               <Info size={24} className="shrink-0" />
-               <div>
-                  <h4 className="font-black uppercase tracking-widest italic">Why Scan & Pay?</h4>
-                  <p className="mt-2 text-sm text-emerald-50 font-medium leading-relaxed">
-                    UPI payments are instant and have **0% platform fees**, meaning 100% of your amount goes directly to the cause.
-                  </p>
-               </div>
-             </div>
+            <div className="flex items-start gap-4">
+              <Info size={24} className="shrink-0" />
+              <div>
+                <h4 className="font-black uppercase tracking-widest italic">Why Scan & Pay?</h4>
+                <p className="mt-2 text-sm text-emerald-50 font-medium leading-relaxed">
+                  UPI payments are instant and have **0% platform fees**, meaning 100% of your amount goes directly to the cause.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -457,7 +469,7 @@ export default function DonatePage() {
         <div className="mx-auto max-w-3xl px-6">
           <h1 className="text-4xl font-black lg:text-6xl tracking-tighter uppercase leading-none">
             Make an{" "}
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent italic px-6">
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent italic px-2 py-1 box-decoration-clone inline-block">
               Impact
             </span>
           </h1>

@@ -8,63 +8,62 @@ datasource db {
 }
 
 model Reel {
-  id          String   @id @default(cuid())
-  organizer   String
-  avatarUrl   String?
-  reelUrl     String
-  videoUrl    String?
-  posterUrl   String?
-  caption     String
-  itemLabel   String
-  itemPrice   Float
-  category    String
-  likes       String   @default("0")
-  comments    String   @default("0")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  donations   Donation[]
+  id        String     @id @default(cuid())
+  organizer String
+  avatarUrl String?
+  reelUrl   String
+  videoUrl  String?
+  posterUrl String?
+  caption   String
+  itemLabel String
+  itemPrice Float
+  category  String
+  likes     Int        @default(0)
+  comments  Int        @default(0)
+  views     Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  donations Donation[]
 }
 
 model Campaign {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   title       String
   description String
   image       String
   goal        Float
-  raised      Float    @default(0)
+  raised      Float      @default(0)
   category    String
   organizer   String
-  status      String   @default("ACTIVE")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  status      String     @default("ACTIVE")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   donations   Donation[]
 }
 
 model Donation {
-  id              String   @id @default(cuid())
-  amount          Float
-  quantity        Int      @default(1)
-  itemLabel       String?
-  donorName       String
-  donorEmail      String
-  phone           String?
-  message         String?
-  paymentStatus   String   @default("pending")
-  paymentMethod   String?  // "razorpay" | "manual"
-  screenshotUrl   String?
-  adminApproved   Boolean  @default(false)
-  adminApprovedAt DateTime?
+  id                String    @id @default(cuid())
+  amount            Float
+  quantity          Int       @default(1)
+  itemLabel         String?
+  donorName         String
+  donorEmail        String
+  phone             String?
+  message           String?
+  paymentStatus     String    @default("pending")
+  paymentMethod     String?
+  screenshotUrl     String?
+  adminApproved     Boolean   @default(false)
+  adminApprovedAt   DateTime?
   razorpayOrderId   String?
   razorpayPaymentId String?
   razorpaySignature String?
-  
-  reelId          String?
-  reel            Reel?    @relation(fields: [reelId], references: [id])
-  
-  campaignId      String?
-  campaign        Campaign? @relation(fields: [campaignId], references: [id])
-  
-  createdAt       DateTime @default(now())
+  reelId            String?
+  campaignId        String?
+  createdAt         DateTime  @default(now())
+  receiptUrl        String?
+  campaign          Campaign? @relation(fields: [campaignId], references: [id])
+  reel              Reel?     @relation(fields: [reelId], references: [id])
 }
 
 model ContactQuery {
@@ -73,17 +72,17 @@ model ContactQuery {
   email     String
   subject   String
   message   String
-  status    String   @default("PENDING") // PENDING, RESOLVED, REJECTED
+  status    String   @default("PENDING")
   createdAt DateTime @default(now())
 }
 
 model Admin {
-  id              String   @id @default(cuid())
-  username        String   @unique
-  email           String   @unique
-  password        String
-  otp             String?
-  otpExpires      DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id         String    @id @default(cuid())
+  username   String    @unique
+  email      String    @unique
+  password   String
+  otp        String?
+  otpExpires DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }

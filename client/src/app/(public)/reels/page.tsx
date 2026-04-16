@@ -18,15 +18,21 @@ interface ReelData {
   comments: string;
 }
 
-import { useGetReelsQuery } from "@/store/api/reelsApi";
+import { useGetReelsQuery, useIncrementReelViewMutation } from "@/store/api/reelsApi";
 import { useCreateDonationMutation } from "@/store/api/donationsApi";
 
 export default function ReelsPage() {
   const router = useRouter();
   const { data: reels = [], isLoading } = useGetReelsQuery();
   const [createDonation] = useCreateDonationMutation();
+  const [incrementView] = useIncrementReelViewMutation();
 
   const [activeDonationId, setActiveDonationId] = useState<string | null>(null);
+  
+  const handleOpenDonation = (id: string) => {
+    setActiveDonationId(id);
+    incrementView(id);
+  };
   const [quantities, setQuantities] = useState<Record<string, number>>({});
 
   const handleQuantityChange = (id: string, value: string) => {
@@ -61,9 +67,9 @@ export default function ReelsPage() {
           <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-2.5 text-xs font-black text-primary uppercase tracking-[0.3em] mb-8 lg:mb-12">
             Real Stories
           </span>
-          <h1 className="text-6xl md:text-8xl lg:text-[10rem] font-black text-white tracking-tighter uppercase leading-[0.8]">
+          <h1 className="text-5xl sm:text-7xl lg:text-9xl font-black text-secondary tracking-tighter leading-[0.85] mb-8">
             Impact <br/>
-            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent italic bg-[length:200%_auto] animate-[gradient_4s_linear_infinite] px-4 md:px-10">
+            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent italic bg-[length:200%_auto] animate-[gradient_4s_linear_infinite] px-2 py-1 box-decoration-clone inline-block">
               In Motion
             </span>
           </h1>
@@ -154,7 +160,7 @@ export default function ReelsPage() {
                 {/* Donation Action Card - Slightly overlapping or below */}
                 <div className="w-[90%] -mt-12 relative z-20">
                   <button
-                    onClick={() => setActiveDonationId(reel.id)}
+                    onClick={() => handleOpenDonation(reel.id)}
                     className="group/btn relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-[32px] glass-morphism p-3 pr-6 border-white/20 transition-all duration-500 hover:shadow-glow hover:-translate-y-1 active:scale-95"
                   >
                     <div className="flex items-center gap-4">

@@ -16,6 +16,7 @@ export interface Donation {
   paymentStatus: string;
   adminApproved?: boolean;
   adminApprovedAt?: string;
+  receiptUrl?: string;
   createdAt: string;
 }
 

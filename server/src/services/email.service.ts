@@ -7,6 +7,7 @@ type EmailPayload = {
   subject: string;
   text: string;
   html: string;
+  attachments?: any[];
 };
 
 export class EmailService {
@@ -81,6 +82,7 @@ export class EmailService {
         subject: payload.subject,
         text: payload.text,
         html: payload.html,
+        attachments: payload.attachments,
       });
 
       logger.info("Email sent", {
@@ -134,7 +136,23 @@ export class EmailService {
     }
   }
 
-  static async sendPaymentSuccessEmail(email: string, donationData: any) {
+  static async sendPaymentSuccessEmail(email: string, donationData: any, receiptBuffer?: Buffer) {
+    const attachments = receiptBuffer ? [
+      {
+        filename: `Maa_Foundation_Receipt.pdf`,
+        content: receiptBuffer
+      }
+    ] : (donationData.receiptUrl ? [
+      {
+        filename: `Maa_Foundation_Receipt.pdf`,
+        path: donationData.receiptUrl
+      }
+    ] : []);
+
+    const receiptHtml = donationData.receiptUrl 
+      ? `<p>Your 80G donation receipt is attached to this email. You can also <a href="${donationData.receiptUrl}">download it here</a>.</p>`
+      : '';
+
     const mailOptions = {
       to: email,
       subject: "Donation Successful - Maa Foundation",
@@ -150,10 +168,12 @@ export class EmailService {
             <li><b>Amount:</b> ₹${donationData.amount}</li>
             <li><b>Date:</b> ${new Date().toLocaleDateString()}</li>
           </ul>
+          ${receiptHtml}
           <p>Your contribution helps us continue our mission. We truly appreciate your support!</p>
           <p>Best regards,<br/>Maa Foundation Team</p>
         </div>
       `,
+      attachments,
     };
 
     try {

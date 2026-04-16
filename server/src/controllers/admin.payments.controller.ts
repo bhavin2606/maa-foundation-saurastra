@@ -45,8 +45,25 @@ export class AdminPaymentsController {
         });
       }
 
+      // Generate Receipt
+      let receiptBuffer: Buffer | undefined;
+      try {
+        const { ReceiptService } = await import("../services/receipt.service.js");
+        const generated = await ReceiptService.generateReceipt(donation);
+        const receiptUrl = generated.url;
+        receiptBuffer = generated.buffer;
+        const updatedDonation = await prisma.donation.update({
+          where: { id: donation.id },
+          data: { receiptUrl },
+        });
+        Object.assign(donation, updatedDonation);
+        logger.info("Receipt generated for manual payment", { donationId: donation.id, receiptUrl });
+      } catch (receiptError) {
+        logger.error("Failed to generate receipt during manual verification", receiptError, { donationId: donation.id });
+      }
+
       // Send success email
-      await EmailService.sendPaymentSuccessEmail(donation.donorEmail, donation);
+      await EmailService.sendPaymentSuccessEmail(donation.donorEmail, donation, receiptBuffer);
 
       logger.info("Manual payment approved", {
         donationId: donation.id,

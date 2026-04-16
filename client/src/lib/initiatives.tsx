@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Bird, BookOpen, Landmark, Leaf, PawPrint, ScrollText } from "lucide-react";
+import { BookOpen, Landmark, Leaf, PawPrint, HeartPulse, Soup, Users, ShieldAlert } from "lucide-react";
 
 export type Initiative = {
   id: string;
@@ -14,94 +14,124 @@ export type Initiative = {
 
 export const initiatives: Initiative[] = [
   {
-    id: "shwan-seva",
-    title: "Shwan Seva",
-    subtitle: "रोज़ाना श्वान सेवा",
-    short: "श्वान को गुड़ व तेल लगाकर रोटियाँ दी जाती हैं।",
+    id: "disaster-relief",
+    title: "Disaster Relief",
+    subtitle: "प्राकृतिक आपदाओं में निस्वार्थ सेवा",
+    short: "प्राकृतिक आपदाओं और आपात स्थितियों के दौरान निस्वार्थ सहायता।",
     description:
-      "Daily shwan seva is a small act with a big heart. हम रोज़ जरूरतमंद श्वानों को गुड़ व तेल लगाकर रोटियाँ देते हैं—ताकि सेवा भी हो और संवेदना भी बढ़े।",
+      "प्राकृतिक आपदाओं और आपात स्थितियों के दौरान, माँ फाउंडेशन प्रभावित लोगों को तत्काल और निस्वार्थ सहायता प्रदान करता है। हम भोजन, पानी और चिकित्सा सहायता सहित आवश्यक राहत सामग्री पहुंचाकर समाज की मदद के लिए हमेशा तत्पर हैं।",
     bullets: [
-      "रोज़ाना भोजन/देखभाल की व्यवस्था",
-      "सुरक्षित, clean feeding spots",
-      "Community awareness for kindness",
+      "शुरुआती राहत सामग्री वितरण",
+      "स्वयंसेवकों द्वारा जमीनी सहायता",
+      "पुनर्वास और आपातकालीन मदद",
     ],
-    icon: <PawPrint size={22} />,
-    image: "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=1600&q=80",
-  },
-  {
-    id: "education",
-    title: "Shiksha Support",
-    subtitle: "बच्चों की पढ़ाई में सहायता",
-    short: "पढ़ाई करते बच्चों को पढ़ाई के लिए मदद की जाती है।",
-    description:
-      "Education changes destiny. हम बच्चों की पढ़ाई में मदद करते हैं—guidance, study support, और जहाँ संभव हो learning resources के साथ।",
-    bullets: [
-      "Study support & mentoring",
-      "Basic learning resources",
-      "Motivation + discipline building",
-    ],
-    icon: <BookOpen size={22} />,
-    image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1600&q=80",
+    icon: <ShieldAlert size={22} />,
+    image: "/images/Disaster_Relief.jpeg",
   },
   {
     id: "temple-restoration",
-    title: "Mandir Jiर्णोद्धार",
-    subtitle: "जर्जर मंदिरों का जीर्णोद्धार",
-    short: "छोटी-छोटी पुरानी जर्जर मंदिरों का जीर्णोद्धार किया जाता है।",
+    title: "Mandir Seva",
+    subtitle: "सार्वजनिक मंदिरों का जीर्णोद्धार एवं रखरखाव",
+    short: "सार्वजनिक मंदिरों का संरक्षण एवं उनकी नियमित देखभाल।",
     description:
-      "Sanatan heritage is our identity. हम पुरानी, जर्जर हो चुकी छोटी-छोटी मंदिरों का जीर्णोद्धार करते हैं—respectfully, with care, और local devotees के सहयोग से।",
+      "हमारी सांस्कृतिक और आध्यात्मिक धरोहर को संजोने के उद्देश्य से, हम सार्वजनिक और पुराने मंदिरों के जीर्णोद्धार और उनकी नियमित देखभाल का कार्य करते हैं, ताकि सनातन धर्म की जड़ें हमेशा मजबूत रहें।",
     bullets: [
-      "Basic repair + cleanliness drives",
-      "Community seva participation",
-      "Preserving local dharmik heritage",
+      "सनातन धरोहर का संरक्षण",
+      "नियमित रखरखाव और सफाई",
+      "मंदिरों का ढांचागत विकास",
     ],
     icon: <Landmark size={22} />,
-    image: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1600&q=80",
+    image: "/images/Mandir_Seva.jpg",
   },
   {
-    id: "birds",
-    title: "Dana-Pani",
-    subtitle: "पक्षियों के लिए दाना-पानी",
-    short: "पक्षियों के लिए दाने और पानी की व्यवस्था की जाती है।",
+    id: "education",
+    title: "Education Support",
+    subtitle: "शैक्षणिक गतिविधियों में सहायता",
+    short: "जरूरतमंद छात्रों को शिक्षा के क्षेत्र में मदद करना।",
     description:
-      "In summers, a drop matters. हम पक्षियों के लिए दाना-पानी की व्यवस्था करते हैं—simple, regular, and humane care for nature around us।",
+      "शिक्षा समाज के उत्थान का मूल है। हम जरूरतमंद छात्रों को पठन-पाठन सामग्री, मार्गदर्शन और अन्य आवश्यक सहायता प्रदान करके उनके उज्ज्वल भविष्य का मार्ग प्रशस्त करते हैं।",
     bullets: [
-      "Water bowls + नियमित refill",
-      "Seasonal grain support",
-      "Awareness to protect birds",
+      "अध्ययन सामग्री और उपकरण",
+      "छात्रों का मार्गदर्शन और करियर सपोर्ट",
+      "बुनियादी शैक्षणिक संसाधन की पूर्ति",
     ],
-    icon: <Bird size={22} />,
-    image: "https://images.unsplash.com/photo-1444464666168-49d633b86797?auto=format&fit=crop&w=1600&q=80",
+    icon: <BookOpen size={22} />,
+    image: "/images/Education_Support.jpg",
   },
   {
-    id: "ayurvedic-trees",
-    title: "Ayurvedic Tree Plantation",
-    subtitle: "आयुर्वेदिक वृक्षारोपण",
-    short: "जहाँ देखभाल हो सके, वहाँ आयुर्वेदिक पेड़ लगाए जाते हैं।",
+    id: "animal-welfare",
+    title: "Animal Welfare",
+    subtitle: "मूक पशु आहार और देखभाल सेवा",
+    short: "मूक पशुओं (गाय, कुत्ते आदि) के लिए भोजन और देखभाल।",
     description:
-      "Planting is easy—care is the real work. हम ऐसी जगह आयुर्वेदिक पेड़ लगाते हैं जहाँ देखभाल possible हो, ताकि हर पौधा सच में पेड़ बने।",
+      "हम उन मूक प्राणियों की सेवा के प्रति समर्पित हैं जो अपनी पीड़ा व्यक्त नहीं कर सकते। हम नियमित रूप से गायों, कुत्तों और अन्य लावारिस पशुओं के लिए पौष्टिक भोजन, पानी और चिकित्सा देखभाल सुनिश्चित करते हैं।",
     bullets: [
-      "Plant where care is possible",
-      "Native + ayurvedic species focus",
-      "Regular watering & protection",
+      "नियमित भोजन और चारा वितरण",
+      "पीने के पानी की व्यवस्था",
+      "बीमार पशुओं के लिए चिकित्सा सहायता",
+    ],
+    icon: <PawPrint size={22} />,
+    image: "/images/animal.jpg",
+  },
+  {
+    id: "annadan",
+    title: "Annadan Seva",
+    subtitle: "अन्नदान सेवा",
+    short: "जरूरतमंदों को पौष्टिक और शुद्ध भोजन प्रदान करना।",
+    description:
+      "'अन्नदान ही महादान है' के विचार को अपनाते हुए, हम नियमित रूप से जरूरतमंद और भूखे लोगों के लिए भोजन वितरण कार्यक्रम आयोजित करते हैं, यह सुनिश्चित करते हुए कि कोई भी व्यक्ति भूखा न सोए।",
+    bullets: [
+      "नियमित भोजन वितरण",
+      "बड़े सामुदायिक रसोई पहल",
+      "गरीब बच्चों पर विशेष ध्यान",
+    ],
+    icon: <Soup size={22} />,
+    image: "/images/Annadan_Seva.jpg",
+  },
+  {
+    id: "health-service",
+    title: "Health Service",
+    subtitle: "स्वास्थ्य और चिकित्सा सेवा",
+    short: "जरूरतमंद लोगों को चिकित्सा सहायता और स्वास्थ्य सेवाएं प्रदान करना।",
+    description:
+      "हम गरीब और वंचित तबके को आवश्यक स्वास्थ्य सेवाएं, दवाएं और चिकित्सा सहायता प्रदान करते हैं। इसके अंतर्गत नियमित स्वास्थ्य जांच शिविर और आपातकालीन चिकित्सा सहायता शामिल है।",
+    bullets: [
+      "निःशुल्क दवाएं और चिकित्सा सहायता",
+      "नियमित स्वास्थ्य जांच शिविर",
+      "आपातकालीन सहयोग और मार्गदर्शन",
+    ],
+    icon: <HeartPulse size={22} />,
+    image: "/images/Health_Service.jpg",
+  },
+  {
+    id: "environmental-care",
+    title: "Nature Care",
+    subtitle: "पर्यावरण संरक्षण और वृक्षारोपण",
+    short: "वृक्षारोपण और पर्यावरण संरक्षण के माध्यम से प्रकृति की देखभाल।",
+    description:
+      "एक हरित और सुरक्षित भविष्य के लिए, हम बड़े पैमाने पर वृक्षारोपण और पर्यावरण संरक्षण अभियान चलाते हैं। हम समाज में स्वच्छता और प्रकृति के प्रति जागरूकता भी फैलाते हैं।",
+    bullets: [
+      "आयुर्वेदिक और औषधीय वृक्षारोपण",
+      "स्वच्छता अभियान और जागरूकता",
+      "प्रकृति संरक्षण अभियान",
     ],
     icon: <Leaf size={22} />,
-    image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1600&q=80",
+    image: "/images/Nature_Care.png",
   },
   {
-    id: "sanatan-katha",
-    title: "Sanatan Katha",
-    subtitle: "सनातन धर्म कथा आयोजन",
-    short: "सनातन धर्म की भव्य कथा का आयोजन किया जाता है।",
+    id: "social-harmony",
+    title: "Social Harmony",
+    subtitle: "सनातन धर्म उत्सव और सामाजिक समरसता",
+    short: "सनातन धर्म के त्योहारों के माध्यम से समाज में समरसता लाना।",
     description:
-      "Katha is संस्कार in action. हम सनातन धर्म की भव्य कथा का आयोजन करते हैं—जहाँ bhakti, values, and community एक साथ जुड़ते हैं।",
+      "हमारा मुख्य उद्देश्य सनातन धर्म के त्योहारों को सामूहिक रूप से मनाकर समाज में एकता, प्रेम और समरसता स्थापित करना है। हम ऐसे कार्यक्रम आयोजित करते हैं जो सभी समुदायों को एक साथ लाते हैं।",
     bullets: [
-      "Katha + satsang आयोजन",
-      "Seva-based community gathering",
-      "Sanskar for all ages",
+      "सनातन पर्वों का सामूहिक आयोजन",
+      "सामाजिक एकता और सौहार्द कार्यक्रम",
+      "सार्वजनिक ज्ञान और संस्कार कार्यशालाएं",
     ],
-    icon: <ScrollText size={22} />,
-    image: "https://images.unsplash.com/photo-1526318472351-c75fcf070305?auto=format&fit=crop&w=1600&q=80",
+    icon: <Users size={22} />,
+    image: "/images/Social_Harmony.jpg",
   },
 ];
 

@@ -125,7 +125,7 @@ export class DonationsService {
 
     if (expectedSignature === razorpay_signature) {
       // Payment is valid, update donation
-      const donation = await prisma.donation.update({
+      let donation = await prisma.donation.update({
         where: { id: donationId },
         data: {
           paymentStatus: "success",
@@ -146,9 +146,26 @@ export class DonationsService {
         });
       }
 
+      // Generate Receipt
+      let receiptBuffer: Buffer | undefined;
+      try {
+        const { ReceiptService } = await import("./receipt.service.js");
+        const generated = await ReceiptService.generateReceipt(donation);
+        const receiptUrl = generated.url;
+        receiptBuffer = generated.buffer;
+        donation = await prisma.donation.update({
+          where: { id: donation.id },
+          data: { receiptUrl },
+        });
+        logger.info("Receipt generated", { donationId: donation.id, receiptUrl });
+      } catch (receiptError) {
+        logger.error("Failed to generate receipt during verification", receiptError, { donationId: donation.id });
+        // Don't fail the payment verification even if receipt generation fails
+      }
+
       // Send success email
       const { EmailService } = await import("./email.service.js");
-      await EmailService.sendPaymentSuccessEmail(donation.donorEmail, donation);
+      await EmailService.sendPaymentSuccessEmail(donation.donorEmail, donation, receiptBuffer);
 
       logger.info("Razorpay payment verified", {
         donationId: donation.id,

@@ -9,3 +9,4 @@ reelsRouter.post("/", authMiddleware, ReelsController.create);
 reelsRouter.get("/:id", ReelsController.getById);
 reelsRouter.put("/:id", authMiddleware, ReelsController.update);
 reelsRouter.delete("/:id", authMiddleware, ReelsController.delete);
+reelsRouter.patch("/:id/view", ReelsController.incrementView);

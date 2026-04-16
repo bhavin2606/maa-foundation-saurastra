@@ -23,9 +23,9 @@ export default function CampaignsPage() {
           <span className="inline-flex items-center gap-2 rounded-full glass-morphism px-6 py-2.5 text-xs font-black text-primary uppercase tracking-[0.3em] mb-8">
             Our Initiatives
           </span>
-          <h1 className="text-6xl md:text-9xl font-black text-secondary tracking-tighter leading-[0.85] mb-12">
-            Active <br/>
-            <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic px-8">
+          <h1 className="text-5xl sm:text-7xl lg:text-9xl font-black text-secondary tracking-tighter leading-[0.85] mb-12">
+            Support Our <br />
+            <span className="bg-gradient-to-r from-primary via-primary-dark to-accent bg-clip-text text-transparent italic px-2 py-1 box-decoration-clone inline-block">
               Campaigns
             </span>
           </h1>
