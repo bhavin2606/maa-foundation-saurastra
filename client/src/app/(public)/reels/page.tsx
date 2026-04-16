@@ -83,7 +83,15 @@ export default function ReelsPage() {
       {/* Reels Gallery Grid */}
       <div className="container mx-auto px-6 py-20 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {reels.map((reel: any) => {
+          {reels.length === 0 ? (
+            <div className="md:col-span-2 lg:col-span-3 flex flex-col items-center justify-center py-40 space-y-8 glass-morphism rounded-[48px] border-white/10">
+              <div className="h-24 w-24 rounded-3xl bg-white/5 flex items-center justify-center text-primary/20">
+                <Play size={48} />
+              </div>
+              <h3 className="text-3xl font-black text-white tracking-tight uppercase">No reels found</h3>
+              <p className="text-slate-400 font-medium">Follow us on Instagram for latest updates!</p>
+            </div>
+          ) : reels.map((reel: any) => {
             let embedUrl = null;
             const igMatch = reel.reelUrl.match(/instagram\.com\/reel\/([A-Za-z0-9_-]+)/);
             if (igMatch) embedUrl = `https://www.instagram.com/reel/${igMatch[1]}/embed/captioned/`;
