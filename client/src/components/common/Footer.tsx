@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, Phone, MapPin } from "lucide-react";
 
 export default function Footer() {
@@ -11,14 +12,9 @@ export default function Footer() {
         <div className="grid gap-16 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="space-y-8">
-            <Link href="/" className="flex items-center gap-3 group transition-all hover:opacity-90">
-              <div className="rounded-2xl bg-white/5 border border-white/10 px-5 py-4 shadow-glow transition-transform group-hover:scale-105">
-                <div className="text-lg font-black tracking-tight text-white leading-none">
-                  Maa <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent italic">Foundation</span>
-                </div>
-                <div className="mt-2 text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">
-                  Seva • Shiksha • Sanskar • Paryavaran
-                </div>
+            <Link href="/" className="flex items-center transition-all hover:opacity-90">
+              <div className="bg-transparent ">
+                <Image src="/images/maa-foundation-logo.png" alt="Maa Foundation" width={200} height={200} className="object-contain" />
               </div>
             </Link>
             <p className="text-base leading-relaxed text-slate-400 font-medium">

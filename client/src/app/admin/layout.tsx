@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -69,19 +70,13 @@ export default function AdminLayout({
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-gray-200 bg-white shadow-premium">
+      <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-white/5 bg-secondary shadow-premium">
         {/* Logo */}
-        <div className="flex items-center gap-2 border-b border-gray-100 px-6 py-4">
-          <Link href="/admin" className="flex items-center gap-2 transition-all hover:opacity-90">
-            <div className="flex flex-col leading-none">
-              <span className="text-sm font-black tracking-tight text-secondary">
-                Maa <span className="text-primary italic">Foundation</span>
-              </span>
-              <span className="mt-1 text-[8px] font-black uppercase tracking-[0.25em] text-muted">
-                Admin Panel
-              </span>
+        <div className="flex items-center gap-2 border-b border-white/5 px-6 py-4">
+          <Link href="/admin" className="flex items-center transition-all hover:opacity-90">
+            <div className="bg-transparent">
+              <Image src="/images/maa-foundation-logo.png" alt="Maa Foundation" width={100} height={100} className="object-contain" />
             </div>
-            <span className="text-xs font-black text-secondary uppercase tracking-[0.2em] border-l border-gray-200 pl-3">Admin</span>
           </Link>
         </div>
 
@@ -95,11 +90,10 @@ export default function AdminLayout({
               <Link
                 key={link.name}
                 href={link.path}
-                className={`flex items-center gap-3 rounded-2xl px-5 py-4 text-sm font-black uppercase tracking-wider transition-all duration-300 ${
-                  isActive
-                    ? "bg-secondary text-white shadow-premium scale-105"
-                    : "text-muted hover:bg-surface hover:text-secondary translate-x-0 hover:translate-x-1"
-                }`}
+                className={`flex items-center gap-3 rounded-2xl px-5 py-4 text-sm font-black uppercase tracking-wider transition-all duration-300 ${isActive
+                  ? "bg-white/10 text-white shadow-premium scale-105 border border-white/5"
+                  : "text-slate-400 hover:bg-white/5 hover:text-white translate-x-0 hover:translate-x-1"
+                  }`}
               >
                 <link.icon size={18} className={isActive ? "text-primary" : ""} />
                 {link.name}
@@ -109,18 +103,18 @@ export default function AdminLayout({
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-gray-100 p-4 space-y-2">
+        <div className="border-t border-white/5 p-4 space-y-2">
           <button
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-2xl px-5 py-4 text-sm font-black uppercase tracking-wider text-red-500 transition-all hover:bg-red-50 hover:shadow-inner"
+            className="flex w-full items-center gap-3 rounded-2xl px-5 py-4 text-sm font-black uppercase tracking-wider text-red-400 transition-all hover:bg-red-500/10 hover:text-red-300"
           >
             <LogOut size={18} />
             Logout
           </button>
-          
+
           <Link
             href="/"
-            className="flex items-center gap-3 rounded-2xl px-5 py-4 text-sm font-black uppercase tracking-wider text-muted transition-all hover:bg-surface hover:text-secondary"
+            className="flex items-center gap-3 rounded-2xl px-5 py-4 text-sm font-black uppercase tracking-wider text-slate-400 transition-all hover:bg-white/5 hover:text-white"
           >
             <HelpCircle size={18} />
             Back to Site

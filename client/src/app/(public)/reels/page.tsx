@@ -28,7 +28,7 @@ export default function ReelsPage() {
   const [incrementView] = useIncrementReelViewMutation();
 
   const [activeDonationId, setActiveDonationId] = useState<string | null>(null);
-  
+
   const handleOpenDonation = (id: string) => {
     setActiveDonationId(id);
     incrementView(id);
@@ -68,13 +68,13 @@ export default function ReelsPage() {
             Real Stories
           </span>
           <h1 className="text-5xl sm:text-7xl lg:text-9xl font-black text-secondary tracking-tighter leading-[0.85] mb-8">
-            Impact <br/>
+            Impact <br />
             <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent italic bg-[length:200%_auto] animate-[gradient_4s_linear_infinite] px-2 py-1 box-decoration-clone inline-block">
               In Motion
             </span>
           </h1>
           <p className="mt-12 text-lg md:text-xl font-medium text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            Witness the change your support creates. Watch, engage, and 
+            Witness the change your support creates. Watch, engage, and
             donate directly to specific causes from the feed.
           </p>
         </div>
@@ -104,7 +104,7 @@ export default function ReelsPage() {
                 className="group relative flex flex-col items-center"
               >
                 {/* Reel Card */}
-                <div 
+                <div
                   className="relative w-full aspect-[9/16] overflow-hidden rounded-[48px] bg-black shadow-2xl border border-white/5 transition-all duration-700 hover:scale-[1.02] hover:shadow-glow/20"
                 >
                   {/* Video/Embed Container */}
@@ -153,14 +153,14 @@ export default function ReelsPage() {
                       {reel.caption}
                     </p>
                     <div className="flex items-center gap-6 text-white/60 mb-2">
-                       <div className="flex items-center gap-2">
-                         <Heart size={16} className="text-primary" />
-                         <span className="text-xs font-black tracking-widest">{reel.likes || "1.2k"}</span>
-                       </div>
-                       <div className="flex items-center gap-2">
-                         <MessageCircle size={16} className="text-accent" />
-                         <span className="text-xs font-black tracking-widest">{reel.comments || "48"}</span>
-                       </div>
+                      <div className="flex items-center gap-2">
+                        <Heart size={16} className="text-primary" />
+                        <span className="text-xs font-black tracking-widest">{reel.likes || "1.2k"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MessageCircle size={16} className="text-accent" />
+                        <span className="text-xs font-black tracking-widest">{reel.comments || "48"}</span>
+                      </div>
                     </div>
                   </div>
                 </div>

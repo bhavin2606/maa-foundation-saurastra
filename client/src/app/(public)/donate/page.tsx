@@ -48,7 +48,7 @@ function DonateContent() {
           Thank you for your support!
         </h2>
         <p className="mt-4 max-w-md text-muted">
-          Your intent to support <strong>Maa Foundation</strong> is deeply appreciated. 
+          Your intent to support <strong>Maa Foundation</strong> is deeply appreciated.
           Please share your payment screenshot on WhatsApp at <strong>+91 9925685995</strong> so we can verify and send your 80G tax benefit receipt.
         </p>
 
@@ -72,11 +72,11 @@ function DonateContent() {
           {/* Header */}
           <div>
             <h2 className="text-2xl font-black text-secondary tracking-tight uppercase">Support Maa Foundation</h2>
-            <p className="mt-2 text-sm text-muted">माँ फाउंडेशन में प्राप्त होने वाला दान धर्म कार्यों और सेवा गतिविधियों में इस्तेमाल किया जाता है।<br/>(Donations received by Maa Foundation are utilized for religious works and social service activities.)</p>
+            <p className="mt-2 text-sm text-muted">माँ फाउंडेशन में प्राप्त होने वाला दान धर्म कार्यों और सेवा गतिविधियों में इस्तेमाल किया जाता है।<br />(Donations received by Maa Foundation are utilized for religious works and social service activities.)</p>
           </div>
 
           {/* Amount Section */}
-          <div className="space-y-4">
+          {/* <div className="space-y-4">
             <label className="text-sm font-black text-secondary uppercase tracking-widest">Select Amount</label>
             <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
               {presets.map((amt) => (
@@ -102,7 +102,7 @@ function DonateContent() {
                 placeholder="Enter custom amount"
               />
             </div>
-          </div>
+          </div> */}
 
           {/* QR Code Section */}
           <div className="space-y-6 rounded-3xl bg-amber-50/50 p-6 border border-amber-100 border-dashed">
