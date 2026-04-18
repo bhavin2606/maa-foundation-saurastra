@@ -115,7 +115,7 @@ function DonateContent() {
                 />
               </div>
               <p className="text-xs font-bold text-muted uppercase tracking-widest">Scan this QR to pay via any UPI App</p>
-              <p className="mt-1 text-sm font-bold text-secondary">maafoundationbg@okaxis</p>
+              <p className="mt-1 text-sm font-bold text-secondary">maaayrvedic7574-2@oksbi</p>
             </div>
 
             <div className="mt-6 rounded-2xl bg-white p-6 border border-gray-100 shadow-sm">
