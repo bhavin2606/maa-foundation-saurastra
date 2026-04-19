@@ -50,7 +50,7 @@ export default function Footer() {
               {[
                 { icon: <Mail size={18} />, value: "maafondations75@gmail.com" },
                 { icon: <Phone size={18} />, value: "+91 9925685995" },
-                { icon: <MapPin size={18} />, value: "Bagasara, Gujarat, India" },
+                { icon: <MapPin size={18} />, value: "Gujarat, India" },
               ].map((item, i) => (
                 <span key={i} className="flex items-center gap-4 text-slate-300 font-medium hover:text-white transition-colors cursor-default">
                   <span className="text-primary">{item.icon}</span> {item.value}
