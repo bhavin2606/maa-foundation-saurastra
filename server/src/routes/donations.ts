@@ -13,3 +13,4 @@ donationsRouter.post("/verify", DonationsController.verifyPayment);
 donationsRouter.post("/manual", upload.single("screenshot"), DonationsController.manualPayment);
 donationsRouter.get("/:id", authMiddleware, DonationsController.getById);
 donationsRouter.delete("/:id", authMiddleware, DonationsController.delete);
+donationsRouter.post("/admin-create", authMiddleware, DonationsController.adminCreate);

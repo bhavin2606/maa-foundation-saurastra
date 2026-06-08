@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Reel {
@@ -70,6 +71,7 @@ model ContactQuery {
   id        String   @id @default(cuid())
   name      String
   email     String
+  phone     String?
   subject   String
   message   String
   status    String   @default("PENDING")

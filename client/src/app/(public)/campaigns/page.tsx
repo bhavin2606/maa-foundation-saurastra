@@ -75,11 +75,13 @@ export default function CampaignsPage() {
                       </div>
                       
                       {/* Progress Circle Overlay */}
-                      <div className="absolute top-8 right-8">
-                        <div className="glass-morphism h-16 w-16 rounded-full flex items-center justify-center border-white/40">
-                          <span className="text-sm font-black text-secondary">{progress}%</span>
+                      {camp.raised > 0 && (
+                        <div className="absolute top-8 right-8">
+                          <div className="glass-morphism h-16 w-16 rounded-full flex items-center justify-center border-white/40">
+                            <span className="text-sm font-black text-secondary">{progress}%</span>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                     
                     <div className="absolute bottom-0 left-0 right-0 p-10 space-y-6">
@@ -105,8 +107,17 @@ export default function CampaignsPage() {
                       
                       <div className="flex items-center justify-between pt-4 border-t border-white/5">
                         <div className="flex flex-col">
-                          <span className="text-3xl font-black text-white italic">₹{camp.raised.toLocaleString()}</span>
-                          <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mt-1">Raised</span>
+                          {camp.raised > 0 ? (
+                            <>
+                              <span className="text-3xl font-black text-white italic">₹{camp.raised.toLocaleString()}</span>
+                              <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mt-1">Raised</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="text-2xl font-black text-white italic">Just Started</span>
+                              <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mt-1">Be the first!</span>
+                            </>
+                          )}
                         </div>
                         <Link
                           href={`/campaigns/${camp.id}`}

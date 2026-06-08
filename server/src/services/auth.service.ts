@@ -24,6 +24,7 @@ export class AuthService {
     });
 
     // Send OTP via Email
+    console.log(`\n🔑 [AUTH] Generated Admin Login OTP for ${username}: ${otp}\n`);
     await EmailService.sendOTP(admin.email, otp);
 
     return { message: "OTP sent to your email", email: admin.email };

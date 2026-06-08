@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { ContactService } from "../services/contact.service.js";
+import { EmailService } from "../services/email.service.js";
 
 /**
  * @swagger
@@ -169,8 +170,19 @@ export class ContactController {
    */
   static async updateStatus(req: Request, res: Response) {
     try {
-      const { status } = req.body;
+      const { status, replyMessage } = req.body;
       const query = await ContactService.updateStatus(req.params.id, status);
+
+      if (status === "RESOLVED") {
+        const messageToSend = replyMessage || "Your inquiry has been successfully resolved. Thank you for reaching out!";
+        await EmailService.sendContactReply(
+          query.email,
+          query.name,
+          query.subject,
+          messageToSend
+        );
+      }
+
       res.json(query);
     } catch (error) {
       res.status(500).json({ error: "Failed to update status" });

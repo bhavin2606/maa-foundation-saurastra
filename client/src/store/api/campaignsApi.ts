@@ -24,7 +24,7 @@ export const campaignsApi = baseApi.injectEndpoints({
       query: (id) => `/campaigns/${id}`,
       providesTags: (result, error, id) => [{ type: "Campaigns", id }],
     }),
-    createCampaign: builder.mutation<Campaign, Partial<Campaign>>({
+    createCampaign: builder.mutation<Campaign, Partial<Campaign> | FormData>({
       query: (body) => ({
         url: "/campaigns",
         method: "POST",
@@ -32,7 +32,7 @@ export const campaignsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Campaigns"],
     }),
-    updateCampaign: builder.mutation<Campaign, { id: string; data: Partial<Campaign> }>({
+    updateCampaign: builder.mutation<Campaign, { id: string; data: Partial<Campaign> | FormData }>({
       query: ({ id, data }) => ({
         url: `/campaigns/${id}`,
         method: "PUT",

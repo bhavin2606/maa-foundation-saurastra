@@ -2,12 +2,17 @@
 
 import { useState } from "react";
 
-import { useGetDonationsQuery } from "@/store/api/donationsApi";
+import { 
+  useGetDonationsQuery,
+  useAdminCreateDonationMutation
+} from "@/store/api/donationsApi";
 import { 
   useApproveManualPaymentMutation, 
-  useRejectManualPaymentMutation 
+  useRejectManualPaymentMutation
 } from "@/store/api/adminPaymentsApi";
-import { Search, Filter, Check, X, Eye, Download } from "lucide-react";
+import { useGetCampaignsQuery } from "@/store/api/campaignsApi";
+import { Search, Filter, Check, X, Eye, Download, Plus, Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
 
 function resolveScreenshotUrl(screenshotUrl?: string) {
   if (!screenshotUrl) {
@@ -25,7 +30,30 @@ export default function AdminDonationsPage() {
   const { data: donations = [], isLoading } = useGetDonationsQuery();
   const [approvePayment] = useApproveManualPaymentMutation();
   const [rejectPayment] = useRejectManualPaymentMutation();
+  const [adminCreateDonation, { isLoading: isCreating }] = useAdminCreateDonationMutation();
+  const { data: campaigns = [] } = useGetCampaignsQuery();
+  
   const [selectedReceipt, setSelectedReceipt] = useState<string | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  const handleAddDonation = async (data: any) => {
+    try {
+      await adminCreateDonation(data).unwrap();
+      setShowAddModal(false);
+      reset();
+      alert("Donation successfully recorded and receipt emailed!");
+    } catch (err: any) {
+      console.error("Failed to add donation:", err);
+      alert(err.data?.error || "Failed to add donation.");
+    }
+  };
 
   const handleApprove = async (id: string) => {
     if (confirm("Are you sure you want to approve this payment?")) {
@@ -75,6 +103,12 @@ export default function AdminDonationsPage() {
         <button className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-medium text-muted hover:bg-gray-50">
           <Filter size={16} /> Filter
         </button>
+        <button 
+          onClick={() => setShowAddModal(true)}
+          className="flex items-center gap-2 rounded-xl bg-secondary px-5 py-3 text-sm font-bold text-white hover:bg-primary transition-colors shadow-sm"
+        >
+          <Plus size={16} /> Add Manual Donation
+        </button>
       </div>
 
       {/* Table */}
@@ -102,7 +136,9 @@ export default function AdminDonationsPage() {
                   <p className="text-sm font-bold text-secondary">₹{d.amount.toLocaleString()}</p>
                 </td>
                 <td className="px-6 py-4">
-                  <p className="text-sm text-secondary truncate max-w-[200px]">{d.itemLabel || "General Contribution"}</p>
+                  <p className="text-sm text-secondary truncate max-w-[200px]">
+                    {d.campaign?.title || d.itemLabel || "General Contribution"}
+                  </p>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex flex-col gap-1">
@@ -181,13 +217,13 @@ export default function AdminDonationsPage() {
               <h3 className="text-lg font-bold text-gray-900">Receipt Viewer</h3>
               <div className="flex gap-2">
                 <a 
-                  href={selectedReceipt} 
+                  href={selectedReceipt.includes('/upload/') ? selectedReceipt.replace('/upload/', '/upload/fl_attachment/') : selectedReceipt} 
                   download
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition-colors"
                 >
-                  <Download size={16} /> Download PDF
+                  <Download size={16} /> Download Receipt
                 </a>
                 <button
                   onClick={() => setSelectedReceipt(null)}
@@ -204,6 +240,118 @@ export default function AdminDonationsPage() {
                 title="PDF Viewer"
               />
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Manual Donation Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-[32px] bg-white p-8 shadow-2xl">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-2xl font-black text-secondary tracking-tight">Record Donation</h3>
+                <p className="text-sm text-muted font-medium mt-1">Log an offline manual payment.</p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowAddModal(false);
+                  reset();
+                }}
+                className="rounded-full p-2 text-muted hover:bg-surface hover:text-secondary transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleSubmit(handleAddDonation)} className="space-y-5">
+              <div className="grid grid-cols-2 gap-5">
+                <div className="col-span-2">
+                  <label className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mb-2 block">Donor Name *</label>
+                  <input
+                    {...register("donorName", { required: true })}
+                    className="w-full rounded-2xl border border-slate-200 bg-surface px-5 py-4 text-sm font-medium outline-none focus:border-primary focus:bg-white"
+                    placeholder="John Doe"
+                  />
+                  {errors.donorName && <span className="text-[10px] text-red-500 font-bold mt-1 block">Required</span>}
+                </div>
+                
+                <div className="col-span-2">
+                  <label className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mb-2 block">Donor Email *</label>
+                  <input
+                    type="email"
+                    {...register("donorEmail", { required: true })}
+                    className="w-full rounded-2xl border border-slate-200 bg-surface px-5 py-4 text-sm font-medium outline-none focus:border-primary focus:bg-white"
+                    placeholder="john@example.com"
+                  />
+                  {errors.donorEmail && <span className="text-[10px] text-red-500 font-bold mt-1 block">Required</span>}
+                </div>
+                
+                <div className="col-span-1">
+                  <label className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mb-2 block">Amount (₹) *</label>
+                  <input
+                    type="number"
+                    min="1"
+                    {...register("amount", { required: true })}
+                    className="w-full rounded-2xl border border-slate-200 bg-surface px-5 py-4 text-sm font-bold text-secondary outline-none focus:border-primary focus:bg-white"
+                    placeholder="1000"
+                  />
+                  {errors.amount && <span className="text-[10px] text-red-500 font-bold mt-1 block">Required</span>}
+                </div>
+
+                <div className="col-span-1">
+                  <label className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mb-2 block">Phone (Optional)</label>
+                  <input
+                    {...register("phone")}
+                    className="w-full rounded-2xl border border-slate-200 bg-surface px-5 py-4 text-sm font-medium outline-none focus:border-primary focus:bg-white"
+                    placeholder="+91..."
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <label className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mb-2 block">Campaign Category</label>
+                  <select
+                    {...register("campaignId")}
+                    className="w-full rounded-2xl border border-slate-200 bg-surface px-5 py-4 text-sm font-medium outline-none focus:border-primary focus:bg-white appearance-none"
+                  >
+                    <option value="">General Donation</option>
+                    {campaigns.map((camp: any) => (
+                      <option key={camp.id} value={camp.id}>{camp.title}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="col-span-2">
+                  <label className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mb-2 block">Message (Optional)</label>
+                  <textarea
+                    {...register("message")}
+                    className="w-full rounded-2xl border border-slate-200 bg-surface px-5 py-4 text-sm font-medium outline-none focus:border-primary focus:bg-white resize-none"
+                    placeholder="Any notes?"
+                    rows={2}
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddModal(false);
+                    reset();
+                  }}
+                  className="rounded-full px-6 py-3 text-xs font-black uppercase tracking-wider text-muted hover:bg-surface transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCreating}
+                  className="flex items-center gap-2 rounded-full bg-secondary px-8 py-3 text-xs font-black uppercase tracking-wider text-white hover:bg-primary transition-all disabled:opacity-50"
+                >
+                  {isCreating ? <Loader2 size={16} className="animate-spin" /> : "Save & Email"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

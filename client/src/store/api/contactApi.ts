@@ -6,6 +6,7 @@ export interface ContactQuery {
   email: string;
   subject: string;
   message: string;
+  phone?: string;
   status?: string;
   createdAt: string;
 }
@@ -24,7 +25,7 @@ export const contactApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Contact"],
     }),
-    updateStatus: builder.mutation<ContactQuery, { id: string; status: string }>({
+    updateStatus: builder.mutation<ContactQuery, { id: string; status: string; replyMessage?: string }>({
       query: ({ id, ...body }) => ({
         url: `/contact/${id}/status`,
         method: "PATCH",

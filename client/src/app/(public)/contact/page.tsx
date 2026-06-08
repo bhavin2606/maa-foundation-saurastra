@@ -8,6 +8,7 @@ import { useState } from "react";
 interface ContactFormData {
   name: string;
   email: string;
+  phone?: string;
   subject: string;
   message: string;
 }
@@ -125,6 +126,15 @@ export default function ContactPage() {
                         className={`w-full rounded-2xl border ${errors.email ? 'border-red-500' : 'border-slate-100'} bg-surface px-6 py-5 text-secondary outline-none transition-all focus:border-primary focus:bg-white focus:shadow-glow`}
                       />
                       {errors.email && <p className="text-[10px] font-bold text-red-500 uppercase px-1">{errors.email.message}</p>}
+                    </div>
+                    <div className="md:col-span-2 space-y-4">
+                      <label className="text-[10px] font-black text-secondary uppercase tracking-[0.3em] px-1">Phone Number (Optional)</label>
+                      <input
+                        type="tel"
+                        {...register("phone")}
+                        placeholder="+91 9876543210"
+                        className="w-full rounded-2xl border border-slate-100 bg-surface px-6 py-5 text-secondary outline-none transition-all focus:border-primary focus:bg-white focus:shadow-glow"
+                      />
                     </div>
                     <div className="md:col-span-2 space-y-4">
                       <label className="text-[10px] font-black text-secondary uppercase tracking-[0.3em] px-1">Subject</label>

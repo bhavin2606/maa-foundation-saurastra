@@ -18,6 +18,9 @@ export class DashboardService {
         orderBy: {
           createdAt: 'desc',
         },
+        include: {
+          campaign: true
+        }
       }),
     ]);
 

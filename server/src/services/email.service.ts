@@ -26,7 +26,7 @@ export class EmailService {
   private static resolveRecipient(email: string) {
     const trimmedEmail = email.trim().toLowerCase();
     const redirectEmail = process.env.EMAIL_REDIRECT_TO?.trim();
-    const blockMailinator = (process.env.EMAIL_BLOCK_MAILINATOR || "true").toLowerCase() !== "false";
+    const blockMailinator = (process.env.EMAIL_BLOCK_MAILINATOR || "false").toLowerCase() === "true";
 
     if (redirectEmail) {
       logger.info("Redirecting outgoing email", {
@@ -183,6 +183,35 @@ export class EmailService {
         email,
         donationId: donationData?.id,
       });
+      return null;
+    }
+  }
+
+  static async sendContactReply(email: string, name: string, originalSubject: string, replyMessage: string) {
+    const mailOptions = {
+      to: email,
+      subject: `Re: ${originalSubject} - Maa Foundation`,
+      text: replyMessage,
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;">
+          <h2 style="color: #4CAF50; margin-top: 0;">Response to Your Inquiry</h2>
+          <p>Dear ${name},</p>
+          <div style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #4CAF50; margin: 20px 0;">
+            <p style="margin: 0; white-space: pre-wrap;">${replyMessage}</p>
+          </div>
+          <p style="color: #666; font-size: 14px; margin-top: 30px;">
+            If you have any further questions, feel free to reply to this email.
+          </p>
+          <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+          <p style="margin: 0;">Best regards,<br/><b>Maa Foundation Team</b></p>
+        </div>
+      `,
+    };
+
+    try {
+      return await this.sendEmail(mailOptions);
+    } catch (error) {
+      logger.error("Error sending contact reply email", error, { email });
       return null;
     }
   }

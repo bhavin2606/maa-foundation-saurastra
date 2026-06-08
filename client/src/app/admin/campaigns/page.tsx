@@ -14,7 +14,8 @@ import {
 interface CampaignFormData {
   title: string;
   description: string;
-  image: string;
+  image?: string;
+  imageFile?: FileList;
   goal: number;
   category: string;
   organizer: string;
@@ -22,8 +23,8 @@ interface CampaignFormData {
 
 export default function AdminCampaignsPage() {
   const { data: campaigns = [], isLoading } = useGetCampaignsQuery();
-  const [createCampaign] = useCreateCampaignMutation();
-  const [updateCampaign] = useUpdateCampaignMutation();
+  const [createCampaign, { isLoading: isCreating }] = useCreateCampaignMutation();
+  const [updateCampaign, { isLoading: isUpdating }] = useUpdateCampaignMutation();
   const [deleteCampaign] = useDeleteCampaignMutation();
 
   const [showForm, setShowForm] = useState(false);
@@ -37,11 +38,31 @@ export default function AdminCampaignsPage() {
   } = useForm<CampaignFormData>();
 
   const onSubmit = async (data: CampaignFormData) => {
+    if (!confirm(editingId ? "Are you sure you want to update this campaign?" : "Are you sure you want to create this campaign?")) {
+      return;
+    }
+    
     try {
-      if (editingId) {
-        await updateCampaign({ id: editingId, data }).unwrap();
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      formData.append("category", data.category);
+      formData.append("goal", data.goal.toString());
+      formData.append("organizer", data.organizer);
+      
+      if (data.imageFile && data.imageFile.length > 0) {
+        formData.append("imageFile", data.imageFile[0]);
+      } else if (data.image) {
+        formData.append("image", data.image);
       } else {
-        await createCampaign(data).unwrap();
+        alert("Please provide an image URL or upload an image file");
+        return;
+      }
+
+      if (editingId) {
+        await updateCampaign({ id: editingId, data: formData }).unwrap();
+      } else {
+        await createCampaign(formData).unwrap();
       }
       setShowForm(false);
       setEditingId(null);
@@ -141,15 +162,19 @@ export default function AdminCampaignsPage() {
                   {errors.organizer && <p className="mt-1 text-xs text-red-500">{errors.organizer.message}</p>}
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-secondary">Image URL *</label>
-                  <input {...register("image", { required: "Image URL is required" })} className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="https://..." />
+                  <label className="mb-1.5 block text-sm font-medium text-secondary">Image *</label>
+                  <div className="space-y-2">
+                    <input type="file" {...register("imageFile")} accept="image/*" className="w-full rounded-xl border border-gray-200 px-4 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white" />
+                    <div className="text-center text-xs text-muted font-medium">OR</div>
+                    <input {...register("image")} className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="Paste Image URL (https://...)" />
+                  </div>
                   {errors.image && <p className="mt-1 text-xs text-red-500">{errors.image.message}</p>}
                 </div>
               </div>
               <div className="flex justify-end gap-3 pt-2">
                 <button type="button" onClick={() => { setShowForm(false); setEditingId(null); reset(); }} className="rounded-xl border border-gray-200 px-6 py-2.5 text-sm font-medium text-muted hover:bg-gray-50">Cancel</button>
-                <button type="submit" className="rounded-xl bg-gradient-to-r from-primary to-accent px-8 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary/20 hover:shadow-lg">
-                  {editingId ? "Update" : "Create"}
+                <button type="submit" disabled={isCreating || isUpdating} className="rounded-xl bg-gradient-to-r from-primary to-accent px-8 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary/20 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                  {(isCreating || isUpdating) ? "Saving..." : (editingId ? "Update" : "Create")}
                 </button>
               </div>
             </form>

@@ -50,8 +50,20 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
+const allowedOrigins = [
+  "http://localhost:3000", 
+  "http://127.0.0.1:3000",
+  process.env.FRONTEND_URL
+].filter(Boolean) as string[];
+
 app.use(cors({
-  origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json());
@@ -69,9 +81,13 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
-  logger.info("Server started", {
-    port: PORT,
-    docsUrl: `http://localhost:${PORT}/api-docs`,
+if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    logger.info("Server started", {
+      port: PORT,
+      docsUrl: `http://localhost:${PORT}/api-docs`,
+    });
   });
-});
+}
+
+export default app;

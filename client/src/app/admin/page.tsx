@@ -22,6 +22,7 @@ export default function AdminDashboard() {
   ];
 
   const recentDonations = data?.recentDonations ?? [];
+  console.log(recentDonations);
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -79,9 +80,10 @@ export default function AdminDashboard() {
                   key={donation.id}
                   className="border-b border-gray-50 transition-colors hover:bg-gray-50/50"
                 >
+
                   <td className="px-4 py-3.5 text-sm font-medium text-secondary">{donation.donorName}</td>
                   <td className="px-4 py-3.5 text-sm font-semibold text-primary">₹{donation.amount.toLocaleString()}</td>
-                  <td className="px-4 py-3.5 text-sm text-muted">{donation.itemLabel || "General Contribution"}</td>
+                  <td className="px-4 py-3.5 text-sm text-muted">{donation.campaign?.title || donation.itemLabel || "General Contribution"}</td>
                   <td className="px-4 py-3.5 text-sm text-muted">{new Date(donation.createdAt).toLocaleDateString()}</td>
                 </tr>
               ))}

@@ -87,11 +87,20 @@ export default function CampaignDetailPage() {
                 </div>
                 <div className="mt-3 flex justify-between">
                   <div>
-                    <p className="text-2xl font-bold text-primary">₹{campaign.raised}</p>
-                    <p className="text-xs text-muted">Raised</p>
+                    {campaign.raised > 0 ? (
+                      <>
+                        <p className="text-2xl font-bold text-primary">₹{campaign.raised.toLocaleString()}</p>
+                        <p className="text-xs text-muted">Raised</p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-2xl font-bold text-primary">Just Started</p>
+                        <p className="text-xs text-muted">Be the first to donate!</p>
+                      </>
+                    )}
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-secondary">₹{campaign.goal}</p>
+                    <p className="text-2xl font-bold text-secondary">₹{campaign.goal.toLocaleString()}</p>
                     <p className="text-xs text-muted">Goal</p>
                   </div>
                 </div>

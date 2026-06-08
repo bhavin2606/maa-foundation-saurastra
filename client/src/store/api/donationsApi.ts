@@ -57,6 +57,14 @@ export const donationsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Donations", "Campaigns"],
     }),
+    adminCreateDonation: builder.mutation<any, { donorName: string; donorEmail: string; phone?: string; amount: string | number; campaignId?: string; itemLabel?: string; message?: string }>({
+      query: (body) => ({
+        url: "/donations/admin-create",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Donations", "Campaigns"],
+    }),
   }),
 });
 
@@ -65,5 +73,6 @@ export const {
   useCreateDonationMutation,
   useCreateRazorpayOrderMutation,
   useVerifyRazorpayPaymentMutation,
-  useCreateManualPaymentMutation
+  useCreateManualPaymentMutation,
+  useAdminCreateDonationMutation
 } = donationsApi;

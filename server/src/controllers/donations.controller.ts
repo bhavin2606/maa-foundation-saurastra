@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { DonationsService } from "../services/donations.service.js";
 import { logger } from "../lib/logger.js";
 import { ImageStorageService } from "../services/image-storage.service.js";
+import { prisma } from "../lib/prisma.js";
+import { EmailService } from "../services/email.service.js";
+import { ReceiptService } from "../services/receipt.service.js";
 
 /**
  * @swagger
@@ -140,6 +143,82 @@ export class DonationsController {
         paymentMethod: req.body?.paymentMethod,
       });
       res.status(500).json({ error: "Failed to process donation" });
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/donations/admin-create:
+   *   post:
+   *     summary: Create an already approved manual donation as admin
+   *     tags: [Donations]
+   *     responses:
+   *       200:
+   *         description: Donation created successfully
+   */
+  static async adminCreate(req: Request, res: Response) {
+    try {
+      const { donorName, donorEmail, phone, amount, campaignId, itemLabel, message } = req.body;
+      
+      if (!donorName || !donorEmail || !amount) {
+        return res.status(400).json({ error: "Name, email, and amount are required" });
+      }
+
+      const donationData = {
+        amount: parseFloat(amount),
+        donorName,
+        donorEmail,
+        phone,
+        message,
+        itemLabel,
+        paymentMethod: "manual",
+        paymentStatus: "success",
+        adminApproved: true,
+        adminApprovedAt: new Date(),
+        campaignId: campaignId || null,
+      };
+
+      const donation = await prisma.donation.create({
+        data: donationData
+      });
+
+      if (donation.campaignId) {
+        await prisma.campaign.update({
+          where: { id: donation.campaignId },
+          data: {
+            raised: { increment: donation.amount },
+          },
+        });
+      }
+
+      let receiptBuffer: Buffer | undefined;
+      try {
+        const generated = await ReceiptService.generateReceipt(donation);
+        const receiptUrl = generated.url;
+        receiptBuffer = generated.buffer;
+        
+        await prisma.donation.update({
+          where: { id: donation.id },
+          data: { receiptUrl },
+        });
+        Object.assign(donation, { receiptUrl });
+      } catch (receiptError) {
+        logger.error("Failed to generate receipt during admin creation", receiptError);
+      }
+
+      // Send email asynchronously in the background so it doesn't block the UI
+      EmailService.sendPaymentSuccessEmail(donation.donorEmail, donation, receiptBuffer).catch((err) => {
+        logger.error("Background email delivery failed", err);
+      });
+
+      res.json({
+        success: true,
+        donation,
+        message: "Manual donation successfully recorded and emailed."
+      });
+    } catch (error) {
+      logger.error("Failed to admin-create donation", error);
+      res.status(500).json({ error: "Failed to create manual donation" });
     }
   }
 

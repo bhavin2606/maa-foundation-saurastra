@@ -1,82 +1,97 @@
 # Maa Foundation Backend
 
-Express + Prisma backend API for the Maa Foundation donation platform.
+Express + TypeScript + Prisma API for the Maa Foundation donation platform, optimized for high-performance PostgreSQL databases and serverless hosting on Vercel.
 
-## Setup
+---
 
-1. Navigate to the server directory:
-   ```bash
-   cd server
-   ```
+## 🚀 Local Development Setup
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Generate Prisma client:
-   ```bash
-   npm run db:generate
-   ```
-
-4. Push database schema:
-   ```bash
-   npm run db:push
-   ```
-
-5. (Optional) Seed the database:
-   ```bash
-   npm run db:seed
-   ```
-
-6. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-The server will run on http://localhost:4000
-
-## API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/campaigns | Get all campaigns |
-| POST | /api/campaigns | Create a campaign |
-| GET | /api/campaigns/:id | Get campaign by ID |
-| PUT | /api/campaigns/:id | Update campaign |
-| DELETE | /api/campaigns/:id | Delete campaign |
-| GET | /api/reels | Get all reels |
-| POST | /api/reels | Create a reel |
-| GET | /api/reels/:id | Get reel by ID |
-| PUT | /api/reels/:id | Update reel |
-| DELETE | /api/reels/:id | Delete reel |
-| GET | /api/donations | Get all donations |
-| POST | /api/donations | Create a donation |
-| GET | /api/contact | Get all contact queries |
-| POST | /api/contact | Submit contact query |
-| GET | /api/dashboard | Get dashboard stats |
-| GET | /api/health | Health check |
-
-## Environment Variables
-
-Create a `.env` file with:
+### 1. Start the PostgreSQL Database
+We have provided a `docker-compose.yml` file in the workspace root. To start your dedicated database locally:
+```bash
+# From the project root directory
+docker compose up -d
 ```
-DATABASE_URL="file:./dev.db"
+This launches a PostgreSQL container mapped to port `5433` with data persistence.
+
+### 2. Configure Environment Variables
+Create or update your `.env` file in the `server` directory:
+```env
+DATABASE_URL="postgresql://myuser:mypassword@localhost:5433/maa_foundation?schema=public"
 PORT=4000
-RAZORPAY_KEY_ID="your_razorpay_key"
+JWT_SECRET="your-admin-secret-key"
+
+# Email Configuration (SMTP)
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT=465
+SMTP_USER="your-email@gmail.com"
+SMTP_PASS="your-app-password"
+
+# Payment Gateways (Razorpay)
+RAZORPAY_KEY_ID="rzp_test_..."
 RAZORPAY_KEY_SECRET="your_razorpay_secret"
+
+# Media Storage (Cloudinary)
 CLOUDINARY_CLOUD_NAME="your_cloud_name"
-CLOUDINARY_API_KEY="your_cloudinary_api_key"
-CLOUDINARY_API_SECRET="your_cloudinary_api_secret"
-CLOUDINARY_FOLDER="maa-foundation"
-LOG_LEVEL="debug"
+CLOUDINARY_API_KEY="your_api_key"
+CLOUDINARY_API_SECRET="your_api_secret"
+CLOUDINARY_FOLDER="maa_foundation_assets"
 ```
 
-Manual payment screenshots are now uploaded to Cloudinary instead of the local filesystem. The upload path is grouped under `CLOUDINARY_FOLDER/donations/<donor-key>/...` so each donor's proofs stay organized with a stable donor-based key.
+### 3. Install & Initialize
+Navigate to the `server` directory and run:
+```bash
+cd server
+npm install
+```
 
-## Moving to a Separate Repository
+### 4. Push Schema & Seed Data
+Push the database schema directly to PostgreSQL and run the seeding script:
+```bash
+# Generate the Prisma Client
+npm run db:generate
 
-To make this a standalone repo:
-1. Copy the `server/` folder to a new location
-2. Initialize git: `git init`
-3. Create a new GitHub repo and push
+# Sync schema with PostgreSQL database
+npm run db:push
+
+# Populate database with initial campaigns, reels, and admin user
+npm run db:seed
+```
+
+### 5. Start Development Server
+```bash
+npm run dev
+```
+The server will boot instantly on `http://localhost:4000`. You can access interactive Swagger API documentation at `http://localhost:4000/api-docs`.
+
+---
+
+## ⚡ Deployment to Vercel (24/7 Serverless)
+
+This backend is 100% configured for serverless hosting on Vercel, ensuring **zero costs** and **no sleeping instances**.
+
+### Step 1: Set up a Hosted PostgreSQL Database
+Choose a serverless/hosted PostgreSQL provider:
+* **Supabase** (Free Tier available)
+* **Neon DB** (Free Tier available)
+* **Railway** (High performance)
+
+Create a database and copy the **connection string**.
+
+### Step 2: Deploy to Vercel
+1. Install Vercel CLI or import your repository directly on the [Vercel Dashboard](https://vercel.com).
+2. Create a new project on Vercel and set the Root Directory to `server/`.
+3. Add the required Environment Variables in the Vercel Dashboard (especially your production `DATABASE_URL`, `CLOUDINARY_*`, `RAZORPAY_*`, etc.).
+4. Click **Deploy**. Vercel will automatically compile the TypeScript on-the-fly and route all endpoints under `https://your-vercel-domain.vercel.app/api/*`.
+
+---
+
+## 🛠️ API Architecture & Structure
+
+The codebase is built following a clean **Controller-Service-Repository** pattern:
+
+* **`/src/routes/`**: Defines API entry endpoints.
+* **`/src/controllers/`**: Receives requests, handles HTTP validation, and formats responses.
+* **`/src/services/`**: Implements core business logic (e.g., Razorpay orders, Cloudinary file uploads, PDF receipt creation).
+* **`/src/lib/`**: Hosts library clients like the Prisma database connection, Nodemailer transporter, and Logger.
+* **`/prisma/`**: Defines the database schema models and database seeds.

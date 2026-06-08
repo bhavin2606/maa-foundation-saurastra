@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import { EmailService } from "../services/email.service.js";
+import { ReceiptService } from "../services/receipt.service.js";
 import { logger } from "../lib/logger.js";
 
 export class AdminPaymentsController {
@@ -48,7 +49,6 @@ export class AdminPaymentsController {
       // Generate Receipt
       let receiptBuffer: Buffer | undefined;
       try {
-        const { ReceiptService } = await import("../services/receipt.service.js");
         const generated = await ReceiptService.generateReceipt(donation);
         const receiptUrl = generated.url;
         receiptBuffer = generated.buffer;
@@ -62,8 +62,10 @@ export class AdminPaymentsController {
         logger.error("Failed to generate receipt during manual verification", receiptError, { donationId: donation.id });
       }
 
-      // Send success email
-      await EmailService.sendPaymentSuccessEmail(donation.donorEmail, donation, receiptBuffer);
+      // Send success email asynchronously
+      EmailService.sendPaymentSuccessEmail(donation.donorEmail, donation, receiptBuffer).catch(err => {
+        logger.error("Background email delivery failed", err);
+      });
 
       logger.info("Manual payment approved", {
         donationId: donation.id,

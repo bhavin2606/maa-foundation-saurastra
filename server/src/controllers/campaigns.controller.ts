@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { CampaignsService } from "../services/campaigns.service.js";
+import { ImageStorageService } from "../services/image-storage.service.js";
+import { logger } from "../lib/logger.js";
 
 /**
  * @swagger
@@ -127,10 +129,29 @@ export class CampaignsController {
    */
   static async create(req: Request, res: Response) {
     try {
-      const campaign = await CampaignsService.create(req.body);
+      let imageUrl = req.body.image;
+
+      if (req.file) {
+        const uploadResult = await ImageStorageService.uploadCampaignImage({
+          file: req.file,
+          campaignTitle: req.body.title || "campaign",
+        });
+        imageUrl = uploadResult.url;
+      }
+
+      if (!imageUrl) {
+        return res.status(400).json({ error: "Image URL or Image file is required" });
+      }
+
+      const campaignData = {
+        ...req.body,
+        image: imageUrl,
+      };
+
+      const campaign = await CampaignsService.create(campaignData);
       res.json(campaign);
     } catch (error) {
-      console.error("Error creating campaign:", error);
+      logger.error("Error creating campaign:", error);
       res.status(500).json({ error: "Failed to create campaign" });
     }
   }
@@ -168,9 +189,25 @@ export class CampaignsController {
    */
   static async update(req: Request, res: Response) {
     try {
-      const campaign = await CampaignsService.update(req.params.id, req.body);
+      let imageUrl = req.body.image;
+
+      if (req.file) {
+        const uploadResult = await ImageStorageService.uploadCampaignImage({
+          file: req.file,
+          campaignTitle: req.body.title || "campaign",
+        });
+        imageUrl = uploadResult.url;
+      }
+
+      const campaignData = {
+        ...req.body,
+        ...(imageUrl && { image: imageUrl }), // only override if a new URL is provided or an image is uploaded
+      };
+
+      const campaign = await CampaignsService.update(req.params.id, campaignData);
       res.json(campaign);
     } catch (error) {
+      logger.error("Error updating campaign:", error);
       res.status(500).json({ error: "Failed to update campaign" });
     }
   }

@@ -14,7 +14,8 @@ import {
   MoreVertical,
   ChevronRight,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  Phone
 } from "lucide-react";
 import { useState } from "react";
 
@@ -42,6 +43,7 @@ export default function AdminMessagesPage() {
   const [deleteMessage] = useDeleteMessageMutation();
   const [selectedMessage, setSelectedMessage] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [replyMessage, setReplyMessage] = useState("");
 
   const filteredMessages = messages.filter(m => 
     m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -51,12 +53,22 @@ export default function AdminMessagesPage() {
 
   const handleStatusUpdate = async (id: string, status: string) => {
     try {
-      await updateStatus({ id, status }).unwrap();
+      await updateStatus({ 
+        id, 
+        status, 
+        replyMessage: status === 'RESOLVED' ? replyMessage : undefined 
+      }).unwrap();
+      
       if (selectedMessage?.id === id) {
         setSelectedMessage({ ...selectedMessage, status });
+        if (status === 'RESOLVED') {
+          setReplyMessage("");
+          alert("Resolved and email sent successfully!");
+        }
       }
     } catch (err) {
       console.error("Failed to update status:", err);
+      alert("Failed to process request.");
     }
   };
 
@@ -117,7 +129,10 @@ export default function AdminMessagesPage() {
             return (
               <button
                 key={msg.id}
-                onClick={() => setSelectedMessage(msg)}
+                onClick={() => {
+                  setSelectedMessage(msg);
+                  setReplyMessage(""); // reset reply message when switching
+                }}
                 className={`group relative text-left p-6 rounded-[32px] border transition-all duration-300 ${
                   isSelected 
                     ? "bg-secondary border-secondary shadow-premium translate-x-2" 
@@ -169,9 +184,16 @@ export default function AdminMessagesPage() {
                     <h2 className="text-3xl font-black text-secondary tracking-tighter mb-1 uppercase tracking-tight leading-none bg-gradient-to-r from-secondary to-muted bg-clip-text text-transparent">
                       {selectedMessage.name}
                     </h2>
-                    <p className="text-sm font-bold text-primary flex items-center gap-2">
-                       <Mail size={14} /> {selectedMessage.email}
-                    </p>
+                    <div className="flex gap-4">
+                      <p className="text-sm font-bold text-primary flex items-center gap-2">
+                         <Mail size={14} /> {selectedMessage.email}
+                      </p>
+                      {selectedMessage.phone && (
+                        <p className="text-sm font-bold text-primary flex items-center gap-2">
+                           <Phone size={14} /> {selectedMessage.phone}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -230,14 +252,40 @@ export default function AdminMessagesPage() {
                   </div>
                 </div>
 
-                <div className="pt-8">
-                  <a 
-                    href={`mailto:${selectedMessage.email}?subject=Re: ${selectedMessage.subject}`}
-                    className="inline-flex items-center gap-4 bg-secondary text-white px-10 py-5 rounded-full font-black uppercase tracking-[0.2em] text-sm shadow-premium hover:bg-primary transition-all hover:-translate-y-1"
-                  >
-                    Reply via Email
-                    <ChevronRight size={18} />
-                  </a>
+                <div className="pt-8 space-y-4">
+                  {selectedMessage.status !== "RESOLVED" && (
+                    <>
+                      <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] flex items-center gap-2">
+                         Reply to User (Sent via Email)
+                      </p>
+                      <textarea
+                        value={replyMessage}
+                        onChange={(e) => setReplyMessage(e.target.value)}
+                        placeholder="Type a custom reply message to send to the user when resolving..."
+                        className="w-full rounded-3xl border border-slate-100 bg-surface px-6 py-5 text-secondary outline-none transition-all focus:border-primary focus:bg-white focus:shadow-glow resize-none"
+                        rows={4}
+                      />
+                      <div className="flex justify-between items-center">
+                        <p className="text-xs text-muted font-medium">A default resolution email will be sent if left empty.</p>
+                        <button 
+                          onClick={() => handleStatusUpdate(selectedMessage.id, "RESOLVED")}
+                          className="inline-flex items-center gap-3 bg-emerald-500 text-white px-8 py-4 rounded-full font-black uppercase tracking-[0.15em] text-sm shadow-premium hover:bg-emerald-600 transition-all hover:-translate-y-1"
+                        >
+                          Resolve & Send
+                          <Mail size={18} />
+                        </button>
+                      </div>
+                    </>
+                  )}
+                  {selectedMessage.status === "RESOLVED" && (
+                     <div className="p-6 rounded-3xl bg-emerald-50 border border-emerald-100 flex items-center gap-4 text-emerald-700">
+                      <CheckCircle2 size={24} className="shrink-0" />
+                      <div>
+                        <p className="font-black uppercase tracking-wider text-xs">Resolved & Emailed</p>
+                        <p className="text-sm font-medium opacity-80">This inquiry has been resolved and the user has been notified.</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

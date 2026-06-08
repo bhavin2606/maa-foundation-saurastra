@@ -20,11 +20,12 @@ export class ContactService {
   }
 
   static async create(data: any) {
-    const { name, email, subject, message } = data;
+    const { name, email, phone, subject, message } = data;
     return await prisma.contactQuery.create({
       data: {
         name,
         email,
+        phone,
         subject,
         message,
       },

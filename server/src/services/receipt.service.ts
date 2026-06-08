@@ -25,9 +25,10 @@ export class ReceiptService {
               cloudinary.uploader.upload_stream(
                 {
                   folder: `${process.env.CLOUDINARY_FOLDER}/receipts`,
-                  public_id: `receipt_${donation.id}.pdf`,
+                  public_id: `receipt_${donation.id}`,
                   overwrite: true,
-                  resource_type: "raw", 
+                  resource_type: "image", 
+                  format: "png"
                 },
                 (error, result) => {
                   if (error) rej(error);
@@ -45,32 +46,33 @@ export class ReceiptService {
         // Design
         const logoPath = path.join(__dirname, "../assets/logo.png");
         if (fs.existsSync(logoPath)) {
-          doc.image(logoPath, 50, 45, { width: 60 });
+          doc.image(logoPath, 50, 40, { width: 70 });
         }
 
         doc
-          .fillColor("#444444")
-          .fontSize(20)
+          .fillColor("#ca8a04")
+          .fontSize(24)
           .font("Helvetica-Bold")
-          .text("Maa Foundation", 120, 55)
+          .text("Maa Foundation", 135, 50)
+          .fillColor("#666666")
           .fontSize(10)
           .font("Helvetica")
-          .text("Reg No: E/5239/Rajkot | Contact: +91 9925685995", 120, 80)
-          .text("Email: maafondations75@gmail.com | Rajkot, Gujarat", 120, 95)
+          .text("Reg No: E/5239/Rajkot | Phone: +91 9925685995", 135, 78)
+          .text("Email: maafondations75@gmail.com | Gujarat, India", 135, 93)
           .moveDown();
 
         doc
-          .strokeColor("#E22D6E")
+          .strokeColor("#ca8a04")
           .lineWidth(2)
-          .moveTo(50, 115)
-          .lineTo(550, 115)
+          .moveTo(50, 125)
+          .lineTo(550, 125)
           .stroke();
 
         doc
-          .fillColor("#E22D6E")
-          .fontSize(24)
+          .fillColor("#ca8a04")
+          .fontSize(22)
           .font("Helvetica-Bold")
-          .text("DONATION RECEIPT", 50, 140, { align: "center" });
+          .text("DONATION RECEIPT", 50, 150, { align: "center", characterSpacing: 2 });
 
         doc.moveDown(2);
 
@@ -88,13 +90,13 @@ export class ReceiptService {
           .text(new Date().toLocaleDateString("en-IN"), 150, detailsTop + 20);
 
         // Donor Info
-        const donorTop = 260;
+        const donorTop = 270;
         doc
-          .fillColor("#E22D6E")
+          .fillColor("#ca8a04")
           .fontSize(12)
           .font("Helvetica-Bold")
           .text("Donor Information", 50, donorTop)
-          .strokeColor("#E22D6E")
+          .strokeColor("#ca8a04")
           .lineWidth(1)
           .moveTo(50, donorTop + 15)
           .lineTo(200, donorTop + 15)
@@ -116,7 +118,7 @@ export class ReceiptService {
         // Line Item Table Header
         const tableTop = 380;
         doc.rect(50, tableTop, 500, 25).fill("#f9f9f9");
-        doc.fillColor("#E22D6E").font("Helvetica-Bold").fontSize(10);
+        doc.fillColor("#ca8a04").font("Helvetica-Bold").fontSize(10);
         doc.text("Description", 60, tableTop + 8);
         doc.text("Qty", 300, tableTop + 8, { width: 50, align: "center" });
         doc.text("Rate", 360, tableTop + 8, { width: 80, align: "right" });
