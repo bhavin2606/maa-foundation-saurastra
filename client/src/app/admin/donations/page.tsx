@@ -57,13 +57,25 @@ export default function AdminDonationsPage() {
 
   const handleApprove = async (id: string) => {
     if (confirm("Are you sure you want to approve this payment?")) {
-      await approvePayment(id);
+      try {
+        await approvePayment(id).unwrap();
+        alert("Payment approved successfully!");
+      } catch (err: any) {
+        console.error("Failed to approve payment:", err);
+        alert(err.data?.error || "Failed to approve payment.");
+      }
     }
   };
 
   const handleReject = async (id: string) => {
     if (confirm("Are you sure you want to reject this payment?")) {
-      await rejectPayment(id);
+      try {
+        await rejectPayment(id).unwrap();
+        alert("Payment rejected successfully!");
+      } catch (err: any) {
+        console.error("Failed to reject payment:", err);
+        alert(err.data?.error || "Failed to reject payment.");
+      }
     }
   };
 

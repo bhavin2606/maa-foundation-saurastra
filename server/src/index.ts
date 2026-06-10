@@ -57,20 +57,8 @@ const options = {
 };
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs, options));
 
-const allowedOrigins = [
-  "http://localhost:3000", 
-  "http://127.0.0.1:3000",
-  process.env.FRONTEND_URL
-].filter(Boolean) as string[];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: true, // Reflects the incoming origin, allowing all origins
   credentials: true,
 }));
 app.use(express.json());
