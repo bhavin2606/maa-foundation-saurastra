@@ -43,8 +43,8 @@ export default function HomePage() {
               </h1>
             </div>
             <p className="max-w-xl text-xl lg:text-2xl leading-relaxed text-muted font-medium">
-              Maa Foundation रोज़ाना shwan seva, बच्चों की पढ़ाई में support, जर्जर मंदिरों का
-              जीर्णोद्धार, पक्षियों के लिए dana-pani, ayurvedic वृक्षारोपण और सनatan katha का आयोजन करती है।
+              माँ फाउंडेशन रोज़ाना श्वान सेवा, बच्चों की पढ़ाई में सहायता, जर्जर मंदिरों का
+              जीर्णोद्धार, पक्षियों के लिए दाना-पानी, आयुर्वेदिक वृक्षारोपण और सनातन कथा का आयोजन करती है।
             </p>
             <div className="flex flex-wrap gap-6 pt-4">
               <Link
