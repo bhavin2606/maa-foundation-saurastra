@@ -55,7 +55,7 @@ export default function AdminDashboard() {
 
       {/* Recent Donations Table */}
       <div className="rounded-2xl bg-white p-6 shadow-sm">
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h2 className="text-lg font-bold text-secondary">Recent Donations</h2>
           <a
             href="/admin/donations"
@@ -65,7 +65,7 @@ export default function AdminDashboard() {
           </a>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full whitespace-nowrap">
             <thead>
               <tr className="border-b border-gray-100 text-left text-xs font-semibold uppercase tracking-wider text-muted">
                 <th className="px-4 py-3">Donor</th>

@@ -71,13 +71,13 @@ export default function ContactPage() {
                 { icon: <Phone size={32} />, label: "Call Us", val: "+91 9925685995", sub: "Available Daily" },
                 { icon: <MapPin size={32} />, label: "Visit Us", val: "Gujarat, India", sub: "Maa Foundation HQ" },
               ].map((item, i) => (
-                <div key={i} className="group p-10 rounded-[48px] glass-card border-slate-100 transition-all duration-500 hover:-translate-y-3 hover:shadow-premium">
-                  <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary text-white shadow-xl transition-all duration-500 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent group-hover:rotate-12 group-hover:shadow-glow">
+                <div key={i} className="group p-6 md:p-10 rounded-[40px] md:rounded-[48px] glass-card border-slate-100 transition-all duration-500 hover:-translate-y-3 hover:shadow-premium">
+                  <div className="mb-6 md:mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary text-white shadow-xl transition-all duration-500 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent group-hover:rotate-12 group-hover:shadow-glow">
                     {item.icon}
                   </div>
                   <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-2">{item.label}</p>
-                  <h3 className="text-2xl font-black text-secondary tracking-tight mb-1">{item.val}</h3>
-                  <p className="text-sm font-medium text-muted">{item.sub}</p>
+                  <h3 className="text-xl md:text-2xl font-black text-secondary tracking-tight mb-1">{item.val}</h3>
+                  <p className="text-xs md:text-sm font-medium text-muted">{item.sub}</p>
                 </div>
               ))}
             </div>
@@ -86,7 +86,7 @@ export default function ContactPage() {
             <div className="lg:col-span-2">
               <div className="relative group">
                 <div className="absolute -inset-4 bg-gradient-to-r from-primary/10 to-accent/10 rounded-[60px] blur-2xl opacity-50" />
-                <div className="relative glass-morphism p-12 md:p-16 rounded-[56px] border-white shadow-premium">
+                <div className="relative glass-morphism p-6 md:p-16 rounded-[40px] md:rounded-[56px] border-white shadow-premium">
                   {submitSuccess && (
                     <div className="mb-10 p-6 rounded-3xl bg-emerald-50 border border-emerald-100 flex items-center gap-4 text-emerald-700 animate-in fade-in slide-in-from-top-4 duration-500">
                       <CheckCircle2 size={24} className="shrink-0" />
@@ -159,11 +159,11 @@ export default function ContactPage() {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="group relative flex w-full items-center justify-center gap-4 overflow-hidden rounded-full bg-secondary py-8 text-xl font-black uppercase tracking-[0.2em] text-white shadow-premium transition-all hover:bg-primary hover:-translate-y-1 active:scale-95 disabled:opacity-50"
+                        className="group relative flex w-full items-center justify-center gap-4 overflow-hidden rounded-full bg-secondary py-4 md:py-8 text-sm md:text-xl font-black uppercase tracking-[0.2em] text-white shadow-premium transition-all hover:bg-primary hover:-translate-y-1 active:scale-95 disabled:opacity-50"
                       >
                         <span className="relative z-10">{isSubmitting ? "Sending..." : "Send Message"}</span>
                         <div className="absolute inset-0 z-0 bg-gradient-to-r from-primary via-accent to-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                        <Send size={24} className="relative z-10" />
+                        <Send size={24} className="relative z-10 hidden sm:block" />
                       </button>
                     </div>
                   </form>

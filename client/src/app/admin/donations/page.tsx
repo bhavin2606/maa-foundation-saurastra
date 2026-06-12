@@ -107,25 +107,27 @@ export default function AdminDonationsPage() {
       </div>
 
       {/* Search and Filter Bar */}
-      <div className="flex gap-4">
+      <div className="flex flex-col md:flex-row gap-4">
         <div className="flex flex-1 items-center gap-2 rounded-xl border border-gray-200 bg-white px-4">
           <Search size={16} className="text-muted" />
-          <input className="flex-1 py-3 text-sm outline-none" placeholder="Search by donor name or campaign..." />
+          <input className="flex-1 py-3 text-sm outline-none w-full" placeholder="Search by donor name or campaign..." />
         </div>
-        <button className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-medium text-muted hover:bg-gray-50">
-          <Filter size={16} /> Filter
-        </button>
-        <button 
-          onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 rounded-xl bg-secondary px-5 py-3 text-sm font-bold text-white hover:bg-primary transition-colors shadow-sm"
-        >
-          <Plus size={16} /> Add Manual Donation
-        </button>
+        <div className="flex gap-4">
+          <button className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-medium text-muted hover:bg-gray-50">
+            <Filter size={16} /> Filter
+          </button>
+          <button 
+            onClick={() => setShowAddModal(true)}
+            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-secondary px-5 py-3 text-sm font-bold text-white hover:bg-primary transition-colors shadow-sm whitespace-nowrap"
+          >
+            <Plus size={16} /> Manual Donation
+          </button>
+        </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-2xl bg-white shadow-sm border border-gray-100">
-        <table className="w-full">
+      <div className="overflow-x-auto rounded-2xl bg-white shadow-sm border border-gray-100">
+        <table className="w-full whitespace-nowrap">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50 text-left text-xs font-semibold uppercase tracking-wider text-muted">
               <th className="px-6 py-4">Donor</th>
@@ -259,7 +261,7 @@ export default function AdminDonationsPage() {
       {/* Add Manual Donation Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-[32px] bg-white p-8 shadow-2xl">
+          <div className="w-full max-w-lg rounded-[32px] bg-white p-5 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h3 className="text-2xl font-black text-secondary tracking-tight">Record Donation</h3>

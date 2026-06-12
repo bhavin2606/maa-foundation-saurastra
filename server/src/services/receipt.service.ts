@@ -12,7 +12,7 @@ export class ReceiptService {
   static async generateReceipt(donation: any): Promise<{ url: string, buffer: Buffer }> {
     return new Promise((resolve, reject) => {
       try {
-        const doc = new PDFDocument({ 
+        const doc = new PDFDocument({
           margin: 50,
           size: 'A4'
         });
@@ -27,7 +27,7 @@ export class ReceiptService {
                   folder: `${process.env.CLOUDINARY_FOLDER}/receipts`,
                   public_id: `receipt_${donation.id}`,
                   overwrite: true,
-                  resource_type: "image", 
+                  resource_type: "image",
                   format: "png"
                 },
                 (error, result) => {
@@ -130,7 +130,7 @@ export class ReceiptService {
         const itemLabel = donation.itemLabel || "General Donation";
         const qty = donation.quantity || 1;
         const rate = donation.amount / qty;
-        
+
         doc.text(itemLabel, 60, rowTop);
         doc.text(qty.toString(), 300, rowTop, { width: 50, align: "center" });
         doc.text(`INR ${rate.toLocaleString("en-IN")}`, 360, rowTop, { width: 80, align: "right" });

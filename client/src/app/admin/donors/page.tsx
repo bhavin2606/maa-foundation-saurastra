@@ -51,8 +51,8 @@ export default function AdminDonorsPage() {
         <input className="flex-1 py-3 text-sm outline-none" placeholder="Search donors..." />
       </div>
 
-      <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
-        <table className="w-full">
+      <div className="overflow-x-auto rounded-2xl bg-white shadow-sm">
+        <table className="w-full whitespace-nowrap">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50 text-left text-xs font-semibold uppercase tracking-wider text-muted">
               <th className="px-6 py-4">Donor</th>

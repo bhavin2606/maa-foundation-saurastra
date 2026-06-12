@@ -119,7 +119,7 @@ export default function HomePage() {
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-100 to-transparent" />
 
         <div className="w-full max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="mb-24 flex flex-col md:flex-row md:items-end justify-between gap-12">
+          <div className="mb-24 flex flex-col items-center text-center md:flex-row md:items-end md:text-left justify-between gap-12">
             <div className="space-y-6">
               <span className="text-primary font-black tracking-[0.4em] uppercase text-xs">Our Work / हमारे कार्य</span>
               <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-secondary tracking-tighter leading-[0.85]">
@@ -131,9 +131,9 @@ export default function HomePage() {
             </div>
             <Link
               href="/work"
-              className="inline-flex items-center gap-6 group text-xl font-black text-secondary uppercase tracking-widest transition-all hover:text-primary"
+              className="inline-flex items-center justify-center gap-4 group text-lg md:text-xl font-black text-secondary uppercase tracking-widest transition-all hover:text-primary"
             >
-              View Details <ArrowRight size={28} className="transition-transform group-hover:translate-x-4 text-primary" />
+              View Details <ArrowRight size={24} className="transition-transform group-hover:translate-x-4 text-primary" />
             </Link>
           </div>
 

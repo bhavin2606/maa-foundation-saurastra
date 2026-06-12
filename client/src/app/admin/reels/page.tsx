@@ -83,7 +83,7 @@ export default function AdminReelsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-secondary">Manage Reels</h1>
           <p className="text-sm text-muted">
@@ -96,7 +96,7 @@ export default function AdminReelsPage() {
             reset({});
             setShowForm(true);
           }}
-          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-accent px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary/20 transition-all hover:shadow-lg"
+          className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-accent px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary/20 transition-all hover:shadow-lg w-full sm:w-auto"
         >
           <Plus size={16} /> Add Reel
         </button>
@@ -277,8 +277,8 @@ export default function AdminReelsPage() {
       )}
 
       {/* Table */}
-      <div className="overflow-hidden rounded-2xl bg-white shadow-sm border border-gray-100">
-        <table className="w-full">
+      <div className="overflow-x-auto rounded-2xl bg-white shadow-sm border border-gray-100">
+        <table className="w-full whitespace-nowrap">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50 text-left text-xs font-semibold uppercase tracking-wider text-muted">
               <th className="px-6 py-4">Preview</th>

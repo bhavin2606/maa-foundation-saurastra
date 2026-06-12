@@ -13,6 +13,7 @@ import {
   Filter,
   MoreVertical,
   ChevronRight,
+  ChevronLeft,
   Loader2,
   AlertCircle,
   Phone
@@ -96,23 +97,23 @@ export default function AdminMessagesPage() {
   return (
     <div className="h-[calc(100vh-140px)] flex flex-col gap-6">
       {/* Header */}
-      <div className="flex items-end justify-between">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-4xl font-black text-secondary tracking-tighter">Messages</h1>
           <p className="text-muted font-medium">Manage and respond to public inquiries.</p>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="relative">
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="relative flex-1 md:flex-initial">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" size={18} />
             <input
               type="text"
               placeholder="Search inquiries..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-80 rounded-2xl border border-slate-100 bg-white pl-12 pr-6 py-3 text-sm outline-none transition-all focus:border-primary focus:shadow-glow"
+              className="w-full md:w-80 rounded-2xl border border-slate-100 bg-white pl-12 pr-6 py-3 text-sm outline-none transition-all focus:border-primary focus:shadow-glow"
             />
           </div>
-          <button className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-100 bg-white text-muted transition-all hover:bg-surface hover:text-secondary shadow-sm">
+          <button className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-100 bg-white text-muted transition-all hover:bg-surface hover:text-secondary shadow-sm shrink-0">
             <Filter size={18} />
           </button>
         </div>
@@ -120,7 +121,7 @@ export default function AdminMessagesPage() {
 
       <div className="flex-1 flex gap-8 overflow-hidden">
         {/* Messages List */}
-        <div className="w-1/3 flex flex-col gap-4 overflow-y-auto pr-4 scrollbar-hide">
+        <div className={`w-full lg:w-1/3 flex-col gap-4 overflow-y-auto lg:pr-4 scrollbar-hide ${selectedMessage ? "hidden lg:flex" : "flex"}`}>
           {filteredMessages.map((msg) => {
             const status = (msg.status || "PENDING") as keyof typeof statusConfig;
             const config = statusConfig[status];
@@ -172,12 +173,18 @@ export default function AdminMessagesPage() {
         </div>
 
         {/* Message Detail */}
-        <div className="flex-1 relative">
+        <div className={`w-full lg:flex-1 relative ${!selectedMessage ? "hidden lg:block" : "block"}`}>
           {selectedMessage ? (
             <div className="h-full rounded-[48px] bg-white border border-slate-100 p-12 flex flex-col shadow-premium overflow-y-auto">
               <div className="flex justify-between items-start mb-12">
                 <div className="flex items-center gap-6">
-                  <div className="h-20 w-20 rounded-[28px] bg-secondary flex items-center justify-center text-white text-2xl font-black italic">
+                  <button 
+                    onClick={() => setSelectedMessage(null)} 
+                    className="lg:hidden p-2 -ml-2 text-muted hover:text-secondary bg-surface rounded-xl"
+                  >
+                     <ChevronLeft size={24} />
+                  </button>
+                  <div className="h-20 w-20 rounded-[28px] bg-secondary hidden sm:flex items-center justify-center text-white text-2xl font-black italic">
                     {selectedMessage.name[0].toUpperCase()}
                   </div>
                   <div>
@@ -207,7 +214,7 @@ export default function AdminMessagesPage() {
               </div>
 
               <div className="flex-1 space-y-12">
-                <div className="grid grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
                   <div className="p-8 rounded-[32px] bg-surface/50 border border-slate-50">
                     <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
                       <Calendar size={12} /> Received Date

@@ -107,14 +107,14 @@ export default function AdminCampaignsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-secondary">Manage Campaigns</h1>
           <p className="text-sm text-muted">Create and manage fundraising campaigns.</p>
         </div>
         <button
           onClick={() => { setEditingId(null); reset({}); setShowForm(true); }}
-          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-accent px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary/20 transition-all hover:shadow-lg"
+          className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-accent px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary/20 transition-all hover:shadow-lg w-full sm:w-auto"
         >
           <Plus size={16} /> Add Campaign
         </button>
@@ -123,7 +123,7 @@ export default function AdminCampaignsPage() {
       {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="mx-4 w-full max-w-lg rounded-2xl bg-white p-8 shadow-2xl">
+          <div className="mx-4 w-full max-w-lg rounded-2xl bg-white p-5 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-xl font-bold text-secondary">
                 {editingId ? "Edit Campaign" : "Add New Campaign"}
@@ -183,8 +183,8 @@ export default function AdminCampaignsPage() {
       )}
 
       {/* Table */}
-      <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
-        <table className="w-full">
+      <div className="overflow-x-auto rounded-2xl bg-white shadow-sm">
+        <table className="w-full whitespace-nowrap">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50 text-left text-xs font-semibold uppercase tracking-wider text-muted">
               <th className="px-6 py-4">Title</th>
