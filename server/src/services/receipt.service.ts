@@ -57,7 +57,7 @@ export class ReceiptService {
           .fillColor("#666666")
           .fontSize(10)
           .font("Helvetica")
-          .text("Reg No: E/5239/Rajkot | Phone: +91 9925685995", 135, 78)
+          .text("Reg No: e-2667 | Phone: +91 9925685995", 135, 78)
           .text("Email: maafondations75@gmail.com | Gujarat, India", 135, 93)
           .moveDown();
 

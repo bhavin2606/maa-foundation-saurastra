@@ -16,5 +16,11 @@
       "src": "/(.*)",
       "dest": "src/index.ts"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/campaigns",
+      "schedule": "0 0 * * *"
+    }
   ]
 }

@@ -71,7 +71,7 @@ export const initiatives: Initiative[] = [
       "बीमार पशुओं के लिए चिकित्सा सहायता",
     ],
     icon: <PawPrint size={22} />,
-    image: "/images/animal.jpg",
+    image: "/images/002.jpeg",
   },
   {
     id: "annadan",

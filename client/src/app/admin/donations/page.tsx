@@ -2,17 +2,21 @@
 
 import { useState } from "react";
 
-import { 
+import {
   useGetDonationsQuery,
   useAdminCreateDonationMutation
 } from "@/store/api/donationsApi";
-import { 
-  useApproveManualPaymentMutation, 
+import {
+  useApproveManualPaymentMutation,
   useRejectManualPaymentMutation
 } from "@/store/api/adminPaymentsApi";
 import { useGetCampaignsQuery } from "@/store/api/campaignsApi";
-import { Search, Filter, Check, X, Eye, Download, Plus, Loader2 } from "lucide-react";
+import { Search, Filter, Check, X, Eye, Download, Plus, Loader2, FileText, Table as TableIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
+
 
 function resolveScreenshotUrl(screenshotUrl?: string) {
   if (!screenshotUrl) {
@@ -32,9 +36,65 @@ export default function AdminDonationsPage() {
   const [rejectPayment] = useRejectManualPaymentMutation();
   const [adminCreateDonation, { isLoading: isCreating }] = useAdminCreateDonationMutation();
   const { data: campaigns = [] } = useGetCampaignsQuery();
-  
+
   const [selectedReceipt, setSelectedReceipt] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+
+  const filteredDonations = donations.filter((d: any) => {
+    const matchesSearch =
+      d.donorName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      d.donorEmail?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      d.campaign?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      d.itemLabel?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesStatus = filterStatus === "all" || d.paymentStatus === filterStatus;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Donations Report", 14, 15);
+
+    const tableColumn = ["Date", "Donor Name", "Email", "Amount", "Campaign/Item", "Method", "Status"];
+    const tableRows = filteredDonations.map((d: any) => [
+      new Date(d.createdAt).toLocaleDateString(),
+      d.donorName || "N/A",
+      d.donorEmail || "N/A",
+      `Rs. ${d.amount}`,
+      d.campaign?.title || d.itemLabel || "General Contribution",
+      d.paymentMethod === 'manual' ? 'Manual' : 'Razorpay',
+      d.paymentStatus.replace(/_/g, ' ').toUpperCase()
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+
+    doc.save(`Donations_Report_${new Date().toISOString().slice(0, 10)}.pdf`);
+  };
+
+  const exportToExcel = () => {
+    const exportData = filteredDonations.map((d: any) => ({
+      Date: new Date(d.createdAt).toLocaleDateString(),
+      "Time": new Date(d.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      "Donor Name": d.donorName || "N/A",
+      "Email": d.donorEmail || "N/A",
+      Amount: d.amount,
+      "Campaign/Item": d.campaign?.title || d.itemLabel || "General Contribution",
+      Method: d.paymentMethod === 'manual' ? 'Manual Transfer' : 'Razorpay',
+      Status: d.paymentStatus.replace(/_/g, ' ').toUpperCase()
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Donations");
+    XLSX.writeFile(workbook, `Donations_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  };
 
   const {
     register,
@@ -110,17 +170,50 @@ export default function AdminDonationsPage() {
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex flex-1 items-center gap-2 rounded-xl border border-gray-200 bg-white px-4">
           <Search size={16} className="text-muted" />
-          <input className="flex-1 py-3 text-sm outline-none w-full" placeholder="Search by donor name or campaign..." />
+          <input
+            className="flex-1 py-3 text-sm outline-none w-full"
+            placeholder="Search by donor name, email or campaign..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
-        <div className="flex gap-4">
-          <button className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-medium text-muted hover:bg-gray-50">
-            <Filter size={16} /> Filter
-          </button>
-          <button 
-            onClick={() => setShowAddModal(true)}
-            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-secondary px-5 py-3 text-sm font-bold text-white hover:bg-primary transition-colors shadow-sm whitespace-nowrap"
+        <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-2 sm:pb-0">
+          <div className="relative flex items-center min-w-[140px]">
+            <Filter size={16} className="absolute left-3 text-muted pointer-events-none" />
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="w-full appearance-none rounded-xl border border-gray-200 bg-white pl-9 pr-8 py-3 text-sm font-medium text-muted outline-none cursor-pointer focus:border-primary"
+            >
+              <option value="all">All Status</option>
+              <option value="success">Success</option>
+              <option value="pending">Pending</option>
+              <option value="failed">Failed</option>
+              <option value="waiting_for_admin">Needs Approval</option>
+            </select>
+          </div>
+
+          <button
+            onClick={exportToPDF}
+            className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors whitespace-nowrap"
+            title="Export to PDF"
           >
-            <Plus size={16} /> Manual Donation
+            <FileText size={16} /> <span className="hidden sm:inline">PDF</span>
+          </button>
+
+          <button
+            onClick={exportToExcel}
+            className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-emerald-600 hover:bg-emerald-50 transition-colors whitespace-nowrap"
+            title="Export to Excel"
+          >
+            <TableIcon size={16} /> <span className="hidden sm:inline">Excel</span>
+          </button>
+
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center justify-center gap-2 rounded-xl bg-secondary px-5 py-3 text-sm font-bold text-white hover:bg-primary transition-colors shadow-sm whitespace-nowrap"
+          >
+            <Plus size={16} /> <span className="hidden sm:inline">Donation</span>
           </button>
         </div>
       </div>
@@ -140,7 +233,7 @@ export default function AdminDonationsPage() {
             </tr>
           </thead>
           <tbody>
-            {donations.map((d: any) => (
+            {filteredDonations.map((d: any) => (
               <tr key={d.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                 <td className="px-6 py-4">
                   <p className="text-sm font-medium text-secondary">{d.donorName}</p>
@@ -160,10 +253,10 @@ export default function AdminDonationsPage() {
                       {d.paymentMethod === 'manual' ? 'Manual Transfer' : 'Razorpay'}
                     </span>
                     {resolveScreenshotUrl(d.screenshotUrl) && (
-                      <a 
+                      <a
                         href={resolveScreenshotUrl(d.screenshotUrl) || undefined}
-                        target="_blank" 
-                        rel="noopener noreferrer" 
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-[10px] font-black text-primary hover:underline uppercase"
                       >
                         <Eye size={10} /> View Proof
@@ -216,7 +309,7 @@ export default function AdminDonationsPage() {
             ))}
           </tbody>
         </table>
-        {donations.length === 0 && (
+        {filteredDonations.length === 0 && (
           <div className="py-12 text-center">
             <p className="text-sm text-muted">No donations found.</p>
           </div>
@@ -230,11 +323,11 @@ export default function AdminDonationsPage() {
             <div className="flex items-center justify-between border-b px-6 py-4 bg-gray-50">
               <h3 className="text-lg font-bold text-gray-900">Receipt Viewer</h3>
               <div className="flex gap-2">
-                <a 
-                  href={selectedReceipt.includes('/upload/') ? selectedReceipt.replace('/upload/', '/upload/fl_attachment/') : selectedReceipt} 
+                <a
+                  href={selectedReceipt.includes('/upload/') ? selectedReceipt.replace('/upload/', '/upload/fl_attachment/') : selectedReceipt}
                   download
-                  target="_blank" 
-                  rel="noopener noreferrer" 
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition-colors"
                 >
                   <Download size={16} /> Download Receipt
@@ -248,9 +341,9 @@ export default function AdminDonationsPage() {
               </div>
             </div>
             <div className="flex-1 bg-gray-100 p-0 m-0 overflow-hidden">
-              <iframe 
-                src={selectedReceipt} 
-                className="w-full h-full border-0 bg-white" 
+              <iframe
+                src={selectedReceipt}
+                className="w-full h-full border-0 bg-white"
                 title="PDF Viewer"
               />
             </div>
@@ -277,7 +370,7 @@ export default function AdminDonationsPage() {
                 <X size={20} />
               </button>
             </div>
-            
+
             <form onSubmit={handleSubmit(handleAddDonation)} className="space-y-5">
               <div className="grid grid-cols-2 gap-5">
                 <div className="col-span-2">
@@ -289,7 +382,7 @@ export default function AdminDonationsPage() {
                   />
                   {errors.donorName && <span className="text-[10px] text-red-500 font-bold mt-1 block">Required</span>}
                 </div>
-                
+
                 <div className="col-span-2">
                   <label className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mb-2 block">Donor Email *</label>
                   <input
@@ -300,7 +393,7 @@ export default function AdminDonationsPage() {
                   />
                   {errors.donorEmail && <span className="text-[10px] text-red-500 font-bold mt-1 block">Required</span>}
                 </div>
-                
+
                 <div className="col-span-1">
                   <label className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mb-2 block">Amount (₹) *</label>
                   <input
@@ -334,7 +427,7 @@ export default function AdminDonationsPage() {
                     ))}
                   </select>
                 </div>
-                
+
                 <div className="col-span-2">
                   <label className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mb-2 block">Message (Optional)</label>
                   <textarea
