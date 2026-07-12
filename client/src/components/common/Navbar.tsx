@@ -38,7 +38,7 @@ export default function Navbar() {
       <div className="w-full max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-12">
         <Link href="/" className="flex maa-foundation-logo.pngitems-center transition-all hover:opacity-90">
           <div className="bg-transparent">
-            <Image src="/images/maa-foundation-logo.png" alt="Maa Foundation Logo" width={80} height={80} className="object-contain" priority />
+            <Image src="/images/maa-foundation-logo.png" alt="Maa Foundation Logo" width={100} height={100} className="object-contain" priority />
           </div>
         </Link>
 

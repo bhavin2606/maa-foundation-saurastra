@@ -30,7 +30,7 @@ function DonateContent() {
   const reelId = searchParams.get("reelId");
   const initialQty = parseInt(searchParams.get("quantity") || "1");
 
-  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "manual">("razorpay");
+  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "manual">("manual");
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -52,7 +52,7 @@ function DonateContent() {
   } = useForm<DonateFormData>({
     defaultValues: {
       amount: 1000,
-      paymentMethod: "razorpay"
+      paymentMethod: "manual"
     }
   });
 
@@ -266,21 +266,15 @@ function DonateContent() {
             <div className="grid gap-4 sm:grid-cols-2">
               <button
                 type="button"
-                onClick={() => {
-                  setPaymentMethod("razorpay");
-                  setValue("paymentMethod", "razorpay");
-                }}
-                className={`flex items-center gap-4 rounded-2xl border-2 p-4 transition-all ${paymentMethod === "razorpay"
-                  ? "border-primary bg-primary/5"
-                  : "border-gray-50 bg-surface hover:border-gray-200"
-                  }`}
+                disabled
+                className="flex items-center gap-4 rounded-2xl border-2 border-gray-50 bg-surface/50 p-4 opacity-60 cursor-not-allowed"
               >
-                <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${paymentMethod === "razorpay" ? "bg-primary text-white" : "bg-gray-200 text-muted"}`}>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-200 text-muted">
                   <CreditCard size={20} />
                 </div>
                 <div className="text-left leading-tight">
                   <p className="font-bold text-secondary">Pay Online</p>
-                  <p className="text-[10px] text-muted">Cards, UPI, Netbanking</p>
+                  <p className="text-[10px] text-red-500 font-bold">Temporarily Disabled</p>
                 </div>
               </button>
 
